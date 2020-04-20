@@ -1,0 +1,104 @@
+﻿@{
+    SelectList m_com_kind = ViewBag.select_com_kind;
+}
+<div class="d-flex justify-content-center">
+    @using (Html.BeginForm("P_23M01_l", "F_23M01", FormMethod.Post))
+    {
+        <table class="table table-bordered table-hover">
+            <thead class="bg-primary text-left">
+                <tr>
+                    <th colspan="4">
+                        電腦設備資料建立--查詢
+                    </th>
+                </tr>
+            </thead>
+            <tbody class="bg-info text-left">
+                <tr>
+                    <td style="width:25%">
+                        設備編號：
+                    </td>
+                    <td colspan="2" style="width:50%">
+                        &nbsp;&nbsp;從 &nbsp; @Html.TextBox("com_no1", null, new { @style = "max-width:50%" })
+                        <i class="fa fa-search" onclick="ShowList('com_no1');"></i>
+                        <br>
+                        &nbsp;&nbsp;到 &nbsp; @Html.TextBox("com_no2", null, new { @style = "max-width:50%" })
+                        <i class="fa fa-search" onclick="ShowList('com_no2');"></i>
+                    </td>
+                    <td rowspan="5" style="vertical-align: middle">
+                        <button type="submit" class="btn btn-primary" style="width:100%" onclick="DoQry(); return false;">
+                            確定
+                        </button>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width:25%">
+                        設備類別：
+                    </td>
+                    <td colspan="2" style="width:50%">
+                        &nbsp;&nbsp;　 &nbsp;&nbsp;@Html.DropDownList("com_kind", m_com_kind, new { @style = "width:50%" })
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width:25%">
+                        配置IP：
+                    </td>
+                    <td colspan="2" style="width:50%">
+                        &nbsp;&nbsp;　 &nbsp;&nbsp;@Html.TextBox("com_ip", null, new { @style = "width:50%" })
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width:25%">
+                        使用者：
+                    </td>
+                    <td colspan="2" style="width:50%">
+                        &nbsp;&nbsp;　 &nbsp;&nbsp;@Html.TextBox("com_cname", null, new { @style = "width:50%" })
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width:25%">
+                        資產編號：
+                    </td>
+                    <td colspan="2" style="width:50%">
+                        &nbsp;&nbsp;　 &nbsp;&nbsp;@Html.TextBox("com_no3", null, new { @style = "width:50%" })
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    }
+</div>
+<script>
+    $("#spl_add").click(function () {
+        location.href = "/SYS_23/F_23M01/P_23M01_a";
+    });
+
+    function my_update(field_id, value) {
+        $("#" + field_id).val(value);
+    }
+    function ShowList(field_id) {
+        let h = screen.availHeight / 2;
+        let w = screen.availWidth / 2;
+        let top = h / 2;
+        let left = w / 2;
+        let m_kind = $("#com_kind").val();
+        window.open("/SYS_23/F_23M01/ShowList_computer?field_id=" + field_id + "&com_kind=" + m_kind, "myWindow",
+            config = "width=" + w + ",height=" + h +
+            ",left=" + left + ",top=" + top + ",toolbar=no,menubar=no," +
+            "resizable=no,status=no,location=no,scrollbars=no")
+    }
+    function DoQry() {
+        let h = screen.availHeight / 2;
+        let w = screen.availWidth / 2;
+        let top = h / 2;
+        let left = w / 2;
+        let m_com_no1 = $("#com_no1").val();
+        let m_com_no2 = $("#com_no2").val();
+        let m_com_kind = $("#com_kind").val();
+        let m_com_ip = $("#com_ip").val();
+        let m_com_cname = $("#com_cname").val();
+        let m_com_no3 = $("#com_no3").val();
+        window.open("/SYS_23/F_23M01/P_23M01_l?com_no1=" + m_com_no1 + "&com_no2=" + m_com_no2 + "&com_kind=" + m_com_kind + "&com_ip=" + m_com_ip + "&com_cname=" + m_com_cname + "&com_no3=" + m_com_no3, "myWindow",
+            config = "width=" + w + ",height=" + h +
+            ",left=" + left + ",top=" + top + ",toolbar=no,menubar=no," +
+            "resizable=no,status=no,location=no,scrollbars=no")
+    }
+</script>

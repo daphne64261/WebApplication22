@@ -1,0 +1,420 @@
+﻿@model WebApplication22.Areas.SYS_01.Models.TripApplyShow_Model
+@{
+    ViewBag.Title = "出差預約登錄--內容";
+}
+<link rel="stylesheet" href="~/Content/mainstyle.css" type="text/css">
+@if (Model.Rec != null)
+{
+    <table border=0 cellspacing=1 cellpadding=5 height=5 width=760>
+        <tr>
+            <td colspan=5>
+                <fieldset style='PADDING-BOTTOM: 1px; PADDING-LEFT: 1px; PADDING-RIGHT: 1px; PADDING-TOP: 1px; WIDTH: 600px'>
+                    <table width=760 border=1 cellspacing=0 class=clsFiledTitleCenter bordercolor=#D7DCDD style='BORDER-COLLAPSE: collapse'>
+                        <tr>
+                            <td height=20 width=200 align=left>
+                                登錄序號： @Model.Rec.ty_no
+                                @Html.HiddenFor(x => Model.Rec.ty_yn)
+                                @Html.HiddenFor(x => Model.Rec.ty_no)
+                            </td>
+                            <td height=20 width=200 align=left>
+                                @Model.ShowYN
+                                @if (Model.Rec.tt_verify == 1)
+                                {
+                                    //@:<input type='button' name='idQuery1' value='出差表列印' onclick='doPrint1()' class='clsButton'>
+                                }
+                                @if (Model.Rec.tt_verify1 == 1)
+                                {
+                                    //@:<input type='button' name='idQuery2' value='請款單列印' onclick='doPrint2()' class='clsButton'>
+                                }
+                            </td>
+                            <td width=360 rowspan=3 align=left valign=top>
+                                出差內容記錄：<br>
+                                @Model.Rec.ty_content.Replace(Environment.NewLine, "<br>")
+                            </td>
+                        </tr>
+                        <tr>
+                            <td height=20 width=400 colspan=2 align=left>
+                                出差地點：@(Model.Rec.ty_place)
+                            </td>
+                        </tr>
+                        <tr>
+                            <td height=20 width=200 align=left>
+                                出差人：&nbsp;&nbsp; @(Model.Rec.ty_emno) / @(Model.Rec.ty_name)
+                                @Html.HiddenFor(x => Model.Rec.ty_emno)
+                                <br />
+                                代理人：&nbsp;&nbsp; @(Model.Rec.ty_agent) / @(Model.Rec.ty_agentName)
+                            </td>
+                            <td height=20 width=200 align=left>
+                                部門：@(Model.Rec.ty_dpname)
+                            </td>
+                        </tr>
+                        <tr>
+                            <td height=20 width=400 colspan=2 align=left>
+                                出差期間：@Html.DisplayFor(x => Model.Rec.ty_date1) ～ @Html.DisplayFor(x => Model.Rec.ty_date2)
+                                @if ((Model.Rec.ty_date1 != Model.Rec.ty_date3) || (Model.Rec.ty_date2 != Model.Rec.ty_date4))
+                                {
+                                    @:<br />&emsp;<font color=red>時間修改：@Html.DisplayFor(x => Model.Rec.ty_date3) ～ @Html.DisplayFor(x => Model.Rec.ty_date4) </font>
+                                }
+                            </td>
+                            @if ((Model.Rec.ty_meetNo ?? 0) != 0)
+                            {
+                            @:</tr>
+                            @:<tr>
+                                @:<td height=20 width=400 colspan=2 align=left>
+                                    if (Model.Rec.ty_meetNo == Model.Rec.ty_meetNo1)
+                                    {
+                                        if ((Model.Rec.rc_bdate != null) && (Model.Rec.rc_edate != null))
+                                        {
+                                            @:<font color=red>出差期間會議：@Model.Rec.ty_meetName &nbsp; &nbsp; @Model.Rec.rc_bdate  ～ @Model.Rec.rc_edate </font>
+                                        }
+                                        else
+                                        {
+                                            @:<font color=red>出差期間會議：@Model.Rec.ty_meetName  (會議已取消)</font>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        if ((Model.Rec.rc_bdate != null) && (Model.Rec.rc_edate != null))
+                                        {
+                                            @:<font color=red>原出差期間會議：@Model.Rec.ty_meetName &nbsp; &nbsp;  @Model.Rec.rc_bdate ～ @Model.Rec.rc_edate </font>
+                                        }
+                                        else
+                                        {
+                                            @:<font color=red>出差期間會議：@Model.Rec.ty_meetName  (會議已取消)</font>
+                                        }
+                                        @: <br />
+                                        if ((Model.Rec.rc_bdate != null) && (Model.Rec.rc_edate != null))
+                                        {
+                                            @:<font color=red>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;出差期間會議：@Model.Rec.ty_meetName1 &nbsp; &nbsp;  @Model.Rec.rc_bdate1  ～ @Model.Rec.rc_edate1 </font>
+                                        }
+                                        else
+                                        {
+                                            @:<font color=red>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;出差期間會議：@Model.Rec.ty_meetName1 (會議已取消)</font>
+                                        }
+                                    }
+                                @:</td>
+                            }
+                            <td width=360 rowspan=4 align=left valign=top>
+                                同行人員：@(Model.GetAllName)<br>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td height=20 width=400 colspan=2 align=left>
+                                出差事由：@(Model.Rec.ty_subject)
+                            </td>
+                        </tr>
+                        <tr>
+                            <td height=20 width=370 colspan=2 align=left>
+                                客戶名稱1：@(Model.Rec.ty_cuname) <br />
+                                客戶名稱2：@(Model.Rec.ty_cuname1) <br />
+                                客戶名稱3：@(Model.Rec.ty_cuname2) <br />
+                                客戶名稱4：@(Model.Rec.ty_cuname3) <br />
+                                客戶名稱5：@(Model.Rec.ty_cuname4) <br />
+                            </td>
+                        </tr>
+                    </table>
+                </fieldset>
+            </td>
+        </tr>
+    </table>
+    <table border=0 cellspacing=0 cellpadding=0 height='5' width=760>
+        <tr>
+            <td colspan=5 height=20 class='heading' width=760>&nbsp;回報登錄</td>
+        </tr>
+        <tr>
+            <td colspan=5>
+                <fieldset style='PADDING-BOTTOM: 1px; PADDING-LEFT: 1px; PADDING-RIGHT: 1px; PADDING-TOP: 1px; WIDTH: 600px'>
+                    <table width=760 border=1 cellspacing=0 class='clsFiledTitleCenter' bordercolor='#D7DCDD' style='BORDER-COLLAPSE: collapse'>
+                        <tr>
+                            <td height=25 width=660 align=left>
+                                出差期間： @Html.DisplayFor(x => Model.Rec.tt_date1) 　～　@Html.DisplayFor(x => Model.Rec.tt_date2)
+                            </td>
+                            <td height=25 width=100 colspan=2 align=right>
+                                @if (Model.Rec.ty_salYN == 1)
+                                {
+                                    @:不轉薪資　
+                                }
+                                @Model.Rec.tt_close
+                            </td>
+                        </tr>
+                        <tr bgcolor=FFC991>
+                            <td height=25 width=660 align=left>
+                                預支金額：金額：@(Model.Rec.tt_prepay ?? 0)
+                                幣別：@(Model.Rec.tt_curr)
+                                匯率：@(Model.Rec.tt_exrate)
+                                歸還金額：@(Model.Rec.tt_prepayB ?? 0)
+                            </td>
+                            <td height=25 width=100 align=right>
+                                <input type='text' id='tt_prepaysub' name='tt_prepaysub' size='5' maxlength='7' style='text-align=right' readonly class='clsListStyle02' Tabindex=-1 value="@(Model.Rec.tt_prepaysub)">
+                                元
+                            </td>
+                        </tr>
+                        <tr bgcolor=FFC991>
+                            <td height=25 width=660 align=left>
+                                預支金額：金額：@(Model.Rec.tt_prepay2 ?? 0)
+                                幣別：@(Model.Rec.tt_curr2)
+                                匯率：@(Model.Rec.tt_exrate2)
+                                歸還金額：@(Model.Rec.tt_prepayB2 ?? 0)
+                            </td>
+                            <td height=25 width=100 align=right>
+                                <input type='text' id='tt_prepaysub2' name='tt_prepaysub2' size='5' maxlength='7' style='text-align=right' readonly class='clsListStyle02' Tabindex=-1 value="@(Model.Rec.tt_prepaysub2)">
+                                元
+                            </td>
+                        </tr>
+                        <tr bgcolor=FFC991>
+                            <td height=25 width=660 align=left>
+                                預支金額：金額：@(Model.Rec.tt_prepay3 ?? 0)
+                                幣別：@(Model.Rec.tt_curr3)
+                                匯率：@(Model.Rec.tt_exrate3)
+                                歸還金額：@(Model.Rec.tt_prepayB3 ?? 0)
+                            </td>
+                            <td height=25 width=100 align=right>
+                                <input type='text' id='tt_prepaysub3' name='tt_prepaysub3' size='5' maxlength='7' style='text-align=right' readonly class='clsListStyle02' Tabindex=-1 value="@(Model.Rec.tt_prepaysub3)">
+                                元
+                            </td>
+                        </tr>
+                        <tr>
+                            <td height=25 width=660 align=left>
+                                交通工具：@(Model.SelCarYN)
+                                車號：@(Model.Rec.tt_carno)
+                                里程數： 去[@(Model.Rec.tt_trip1 ?? 0)]  回[@(Model.Rec.tt_trip2 ?? 0)] = [@(Model.Rec.tt_trip ?? 0)] 公里
+                            </td>
+                            <td height=25 width=100 colspan=2 align=right rowspan=2>
+                                <input type='text' id='tt_tripsub' name='tt_tripsub' size='5' maxlength='5' style='text-align=right' readonly class='clsListStyle02' Tabindex=-1 value="@(Model.Rec.tt_tripsub)">
+                                元
+                            </td>
+                        </tr>
+                        <tr>
+                            <td height=25 width=660 align=left>
+                                公務車加油：@Html.DisplayFor(x => Model.Rec.tt_OilDate)
+                                加油里程：  @Model.Rec.tt_OilTrip
+                                公升數：   @Model.Rec.tt_OilCnt
+                                金額：     @Model.Rec.tt_OilCharge
+                                發票號碼：  @Model.Rec.tt_OilInv
+                                銷售額：   @Model.Rec.tt_OilCharge1
+                                營業稅：   @Model.Rec.tt_OilCharge2
+                            </td>
+                        </tr>
+                        <tr>
+                            <td height=25 width=660 align=left>
+                                停車費： @Model.Rec.tt_park
+                                過路費： @Model.Rec.tt_carpass
+                            </td>
+                            <td height=25 width=100 colspan=2 align=right>
+                                <input type='text' id='tt_parksub' name='tt_parksub' size='5' maxlength='5' style='text-align=right' readonly class='clsListStyle02' Tabindex=-1 value="@(Model.Rec.tt_parksub)">
+                                元
+                            </td>
+                        </tr>
+                        <tr>
+                            <td height=25 colspan=3 class='clsListNormalLeft'>
+                                <table border=1 cellspacing=0 cellpadding=0 style='BORDER-COLLAPSE:collapse' width=760>
+                                    <thead>
+                                        <tr>
+                                            <td width=100 class='clsTableTitleCenter' Rowspan=2>日期</td>
+                                            <td width=160 class='clsTableTitleCenter' Rowspan=2>起訖地點與工作記要</td>
+                                            <td width=150 class='clsTableTitleCenter' colspan=3>交通費</td>
+                                            <td width=50 class='clsTableTitleCenter' Rowspan=2>住宿費</td>
+                                            <td width=120 class='clsTableTitleCenter' colspan=3>膳食費</td>
+                                            <td width=100 class='clsTableTitleCenter'>什支費金額</td>
+                                            <td width=100 class='clsTableTitleCenter'>交際費金額</td>
+                                        </tr>
+                                        <tr>
+                                            <td width=50 class='clsTableTitleCenter'>火車</td>
+                                            <td width=50 class='clsTableTitleCenter'>汽車</td>
+                                            <td width=50 class='clsTableTitleCenter'>飛機</td>
+                                            <td width=40 class='clsTableTitleCenter'>早餐</td>
+                                            <td width=40 class='clsTableTitleCenter'>午餐</td>
+                                            <td width=40 class='clsTableTitleCenter'>晚餐</td>
+                                            <td width=100 class='clsTableTitleCenter'>什支費摘要</td>
+                                            <td width=100 class='clsTableTitleCenter'>交際費摘要</td>
+                                        </tr>
+                                    </thead>
+                                    <TBODY id='DataDetail'>
+                                        @for (int i = 0; i < Model.Rec1.Count; i++)
+                                        {
+                                            string strSel;
+                                            //非假日，則不顯示
+                                            if (Model.Rec1[i].ho_date == null)
+                                            {
+                                                strSel = "<font color=blue>夜間工作：</font>";
+                                                switch (Decimal.ToInt32(Model.Rec1[i].td_type))
+                                                {
+                                                    case 0:
+                                                        strSel = strSel + "無公務行為";
+                                                        break;
+                                                    case 2:
+                                                        strSel = strSel + "加班 " + Model.Rec1[i].td_hour + " 小時";
+                                                        break;
+                                                }
+                                            }
+                                            else
+                                            {
+                                                strSel = "<font color=Red>假日工作：</font>";
+                                                switch (Decimal.ToInt32(Model.Rec1[i].td_type))
+                                                {
+                                                    case 0:
+                                                        strSel = strSel + "無公務行為";
+                                                        break;
+                                                    case 1:
+                                                        strSel = strSel + "調假 " + Model.Rec1[i].td_hour + " 小時";
+                                                        break;
+                                                    case 2:
+                                                        strSel = strSel + "加班 " + Model.Rec1[i].td_hour + " 小時";
+                                                        break;
+                                                }
+                                            }
+                                            <tr height=22>
+                                                <td width=100 class='clsListNormalCenter'>
+                                                    <input id="td_date@(i)" name="td_date@(i)" maxlength=10 size=8 readonly class='clsListStyle02' Tabindex=-1 value="@Model.Rec1[i].td_date)">
+                                                </td>
+                                                <td width=160 class='clsListNormalCenter'>
+                                                    <input id="td_memo@(i)" name="td_memo@(i)" maxlength=50 size=25 readonly class='clsListStyle02' Tabindex=-1 value="@(Model.Rec1[i].td_memo)"><br> @strSel
+                                                </td>
+                                                <td width=50 class='clsListNormalCenter'>
+                                                    <input id="td_taxisub1@(i)" name="td_taxisub1@(i)" maxlength=8 size=5 style='text-align=right' readonly class='clsListStyle02' Tabindex=-1 value="@(Model.Rec1[i].td_taxisub1)">
+                                                </td>
+                                                <td width=50 class='clsListNormalCenter'>
+                                                    <input id="td_taxisub2@(i)" name="td_taxisub2@(i)" maxlength=8 size=5 style='text-align=right' readonly class='clsListStyle02' Tabindex=-1 value="@(Model.Rec1[i].td_taxisub2)">
+                                                </td>
+                                                <td width=50 class='clsListNormalCenter'>
+                                                    <input id="td_taxisub3@(i)" name="td_taxisub3@(i)" maxlength=8 size=5 style='text-align=right' readonly class='clsListStyle02' Tabindex=-1 value="@(Model.Rec1[i].td_taxisub3)">
+                                                </td>
+                                                <td width=50 class='clsListNormalCenter'>
+                                                    <input id="td_livesub@(i)" name="td_livesub@(i)" maxlength=8 size=5 style='text-align=right' readonly class='clsListStyle02' Tabindex=-1 value="@(Model.Rec1[i].td_livesub)">
+                                                </td>
+                                                <td width=40 class='clsListNormalCenter'>
+                                                    <input id="td_meal1@(i)" name="td_meal1@(i)" maxlength=8 size=4 style='text-align=right' readonly class='clsListStyle02' Tabindex=-1 value="@(Model.Rec1[i].td_meal1)">
+                                                </td>
+                                                <td width=40 class='clsListNormalCenter'>
+                                                    <input id="td_meal2@(i)" name="td_meal2@(i)" maxlength=8 size=4 style='text-align=right' readonly class='clsListStyle02' Tabindex=-1 value="@(Model.Rec1[i].td_meal2)">
+                                                </td>
+                                                <td width=40 class='clsListNormalCenter'>
+                                                    <input id="td_meal3@(i)" name="td_meal3@(i)" maxlength=8 size=4 style='text-align=right' readonly class='clsListStyle02' Tabindex=-1 value="@(Model.Rec1[i].td_meal3)">
+                                                </td>
+                                                <td width=100 class='clsListNormalCenter'>
+                                                    <input id="td_othersub@(i)" name="td_othersub@(i)" maxlength=8 size=5 readonly class='clsListStyle02' Tabindex=-1 value="@(Model.Rec1[i].td_othersub)" onchange="ChkValueD( @(i) ,'6' ,this.name )">
+                                                    <input id="td_other@(i)" name="td_other@(i)" maxlength=20 size=15 readonly class='clsListStyle02' Tabindex=-1 value="@(Model.Rec1[i].td_other)">
+                                                </td>
+                                                <td width=100 class='clsListNormalCenter'>
+                                                    <input id="td_socialsub@(i)" name="td_socialsub@(i)" maxlength=8 size=5 style='text-align=right' readonly class='clsListStyle02' Tabindex=-1 value="@(Model.Rec1[i].td_socialsub)">
+                                                    <input id="td_social@(i)" name="td_social@(i)" maxlength=20 size=15 readonly class='clsListStyle02' Tabindex=-1 value="@(Model.Rec1[i].td_social)">
+                                                </td>
+                                            </tr>
+                                        }
+                                    </TBODY>
+                                </table>
+                                <input type="hidden" id="RecCount" name="RecCount" value="@(Model.Rec1.Count)">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td height=25 width=660 align=left>
+                                搭乘交通工具：@Model.Rec.tt_taxi
+                                費用：@Model.Rec.tt_taxisub
+                            </td>
+                            <td height=25 width=100 colspan=2 align=right>
+                                <input type='text' id='tt_taxisub' name='tt_taxisub' size='5' maxlength='5' style='text-align=right' readonly class='clsListStyle02' Tabindex=-1 value="@(Model.Rec.tt_taxisub)">
+                                元
+                            </td>
+                        </tr>
+                        <tr>
+                            <td height=25 width=660 align=left>
+                                住宿費：@Model.Rec.tt_livesub
+                            </td>
+                            <td height=25 width=100 colspan=2 align=right>
+                                <input type='text' id='tt_livesub' name='tt_livesub' size='5' maxlength='5' style='text-align=right' readonly class='clsListStyle02' Tabindex=-1 value="@(Model.Rec.tt_livesub)">
+                                元
+                            </td>
+                        </tr>
+                        <tr>
+                            <td height=25 width=660 align=left>
+                                膳食費：
+                                &nbsp;&nbsp;早餐: @Model.Rec.tt_meal1
+                                &nbsp;&nbsp;午餐: @Model.Rec.tt_meal2
+                                &nbsp;&nbsp;晚餐: @Model.Rec.tt_meal3
+                            </td>
+                            <td height=25 width=100 colspan=2 align=right>
+                                <input type='text' id='tt_mealsub' name='tt_mealsub' size='5' maxlength='5' style='text-align=right' readonly class='clsListStyle02' Tabindex=-1 value="@(Model.Rec.tt_mealsub)">
+                                元
+                            </td>
+                        </tr>
+                        <tr>
+                            <td height=25 width=660 align=left>
+                                什支費：@Model.Rec.tt_othersub
+                            </td>
+                            <td height=25 width=100 colspan=2 align=right>
+                                <input type='text' id='tt_othersub' name='tt_othersub' size='5' maxlength='5' style='text-align=right' readonly class='clsListStyle02' Tabindex=-1 value="@(Model.Rec.tt_othersub)">
+                                元
+                            </td>
+                        </tr>
+                        <tr>
+                            <td height=25 width=660 align=left>
+                                交際費：@Model.Rec.tt_socialsub
+                            </td>
+                            <td height=25 width=100 colspan=2 align=right>
+                                <input type='text' id='tt_socialsub' name='tt_socialsub' size='5' maxlength='5' style='text-align=right' readonly class='clsListStyle02' Tabindex=-1 value="@(Model.Rec.tt_socialsub)">
+                                元
+                            </td>
+                        </tr>
+                        <tr>
+                            <td height=25 width=660 align=left>
+                                國外出差補助津貼：@Model.Rec.tt_outsub
+                            </td>
+                            <td height=25 width=100 colspan=2 align=right>
+                                <input type='text' id='tt_outsub' name='tt_outsub' size='5' maxlength='5' style='text-align=right' readonly class='clsListStyle02' Tabindex=-1 value="@(Model.Rec.tt_outsub)">
+                                元
+                            </td>
+                        </tr>
+                        @* 2014/07/08 by souleye 新增營業稅財務修改 *@
+                        <tr>
+                            <td height=25 width=660 align=left>
+                                營業稅財務修改：@Model.Rec.tt_finanical
+                            </td>
+                            <td height=25 width=100 colspan=2 align=right>
+                                <input type='text' id='tt_finanical' name='tt_finanical' size='5' maxlength='5' style='text-align=right' readonly class='clsListStyle02' Tabindex=-1 value="@(Model.Rec.tt_finanical)">
+                                元
+                            </td>
+                        </tr>
+                        <tr>
+                            <td height=25 width=660 align=left>
+                                出差報告：<br>　@Model.Rec.tt_report.Replace(Environment.NewLine, "<br>")
+                            </td>
+                            <td height=25 width=100 colspan=2 align=right>
+                                <input type='text' id='tt_totalsub' name='tt_totalsub' size='5' maxlength='5' style='text-align=right' readonly class='clsListStyle02' Tabindex=-1 value="@(Model.Rec.tt_totalsub)">
+                                元
+                            </td>
+                        </tr>
+                    </table>
+                </fieldset>
+            </td>
+        </tr>
+    </table>
+}
+else
+{
+    <table width=400 border=1 cellspacing=0 class=clsFiledTitleCenter bordercolor=#D7DCDD style='BORDER-COLLAPSE: collapse'>
+        <tr>
+            <td height=50 colspan=3>
+                查無此出差登錄序號： @Model.ty_no
+            </td>
+        </tr>
+    </table>
+}
+
+<script>
+	function doPrint1()
+	{
+		var ty_no = @Model.Rec.ty_no ;
+
+		var rptURL="/SYS_01/F_01D02/P_01D02_r?ty_no=" + ty_no ;
+        var sFeature = "status=no,left=500,top=150,width=720,height=550,resizable=yes,toolbar=no,titlebar=yes,menubar=no";
+        var myWindow = window.open(rptURL, "_blank", sFeature);
+	}
+	function doPrint2()
+	{
+		var ty_no = @Model.Rec.ty_no ;
+
+        var rptURL ="/SYS_01/F_01D02/P_01D02_r1?ty_no=" + ty_no ;
+        var sFeature = "status=no,left=500,top=150,width=720,height=550,resizable=yes,toolbar=no,titlebar=yes,menubar=no";
+        var myWindow = window.open(rptURL, "_blank", sFeature);
+	}
+</script>

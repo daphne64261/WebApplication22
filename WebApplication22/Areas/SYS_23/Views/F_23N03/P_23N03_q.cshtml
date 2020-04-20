@@ -1,0 +1,480 @@
+﻿@{
+    //改寫程式碼如下 Transart\MisService\mser03_q.asp
+    /*
+     *
+    //設定上方按鈕初始狀態
+    window.systemButton.reset();
+    window.systemButton.btnSysQry.enable(false);
+    window.systemButton.btnSysAdd.enable(false);
+    window.systemButton.btnSysSave.enable(false);
+
+    window.systemButton.btnSysF1.setCaption('列印');
+    window.systemButton.btnSysF1.setDisplay(true);
+    window.systemButton.btnSysF1.enable(true);
+
+    btnSysF3 未被啟用, 故mser03_l1.asp不改寫
+    function ShowSch()
+    {
+        rptURL="mser03_l1.asp" ;
+        sFeature = "status:no; center:yes; help:no; dialogWidth:760px ;dialogHeight:550px ;resizable:yes";
+        retVal = window.showModalDialog(rptURL, null, sFeature);
+
+    }
+    window.systemButton.btnSysF3.onclick = ShowSch;
+     */
+}
+@model PagedList.IPagedList<Data.Models.MisService>
+@using PagedList.Mvc;
+
+@{
+    ViewBag.Title = "資訊服務需求單資料查印";
+
+    //連結UrlPath
+    string my_URL = this.Request.Url.ToString();
+    string my_controllername = this.ViewContext.RouteData.Values["controller"].ToString();
+    int i = my_URL.IndexOf(my_controllername);
+    string base_URL = my_URL.Remove(i);
+
+    //接收controller 傳遞資訊
+    string dp_no = ViewBag.dp_no;
+    string dateKind = ViewBag.dateKind;
+    string date1 = ViewBag.date1;
+    string date2 = ViewBag.date2;
+    string the_str = ViewBag.the_str;
+    string qryKind = ViewBag.qryKind;
+
+    int? PageSize = ViewBag.PageSize;
+    int? PageNumber = ViewBag.PageNumber;
+
+    //需求者部門
+    IEnumerable<SelectListItem> dept_List = ViewBag.Select_Dept;
+
+    //變數設定
+    string ms_date1 = "";
+    string ms_pcdate = "";
+    string ms_dpname = "";
+}
+
+@*網頁訊息顯示*@
+@if (TempData["message"] != null)
+{
+    <script type="text/javascript">
+        var message = @Html.Raw(Json.Encode(TempData["message"]));
+        alert(message);
+    </script>
+}
+else
+{
+    //pass
+}
+
+<form method="post" action="mser03_q.asp" name="frmCrtl" id="frmCrtl" onsubmit="return false;">
+    <table width="1070" border="0" cellspacing="0" cellpadding="0" align="center" style="width:80%">
+        <tr>
+            <td colspan=4 height=30 bgcolor="#0000FF" class='heading2' width="760"><b><font color="#FFFFFF">資訊服務需求單資料查印</font></b></td>
+        </tr>
+        <tr>
+            <td height=35 class="clsTableTitleLeft" width="250">
+                部門：@*<% =GetSelDep( Request.QueryString("dpno") ) %>*@
+                @Html.DropDownList("selDep", dept_List, new { id = "selDep", @onchange = "ChangeDept()", @style = "height:30px" })
+            </td>
+            <td height=35 class="clsTableTitleLeft" width="320">
+                <select id="DateKind" name="DateKind" onchange="ChangeDateKind()" style="height:30px">
+                    @if (dateKind == "MS_DATE1")
+                    {
+                        <option value="MS_DATE1" selected="selected">申請日期</option>
+                    }
+                    else
+                    {
+                        <option value="MS_DATE1">申請日期</option>
+                    }
+                    @if (dateKind == "MS_RCDATE")
+                    {
+                        <option value="MS_RCDATE" selected="selected">完工日期</option>
+                    }
+                    else
+                    {
+                        <option value="MS_RCDATE">完工日期</option>
+                    }
+                </select>
+                ：起
+                @*
+                    <input type="text" name="Date1" size="8" maxlength="10" value="<%=Request.QueryString(" Date1") %>" onchange="chkDate('Date1')">
+                    <IMG id="img2" style="CURSOR: pointer" onclick="showCalendar('Date1')" height=13 src="../images/date_picker.gif" width=13>
+                *@
+                @*下述用法雖然套用datepicker 但選完日期後, 視窗不會自己關閉*@
+                <!--<input type="text" id="Date1" name="Date1" size="8" maxlength="10" value="" onchange="chkDate('Date1')" class="datepicker" autocomplete="off" style="width:50px; margin-top: 5px;margin-bottom: 5px">-->
+                @*下述參數(name, value, , 因已設定日期值, 故無需使用指定class來setDate, 沿用datePicker即可, 不然資料會顯示錯誤日期*@
+                @Html.TextBox("Date1", date1, new { id = "Date1", @class = "datepicker", @style = "width:18%", @autocomplete = "off" })
+                ～訖
+                @*
+                    <input type="text" name="Date2" size="8" maxlength="10" value="<%=Request.QueryString(" Date2") %>" onchange="chkDate('Date2')">
+                    <IMG id="img2" style="CURSOR: pointer" onclick="showCalendar('Date2')" height=13 src="../images/date_picker.gif" width=13>
+                *@
+                <!--<input type="text" id="Date2" name="Date2" size="8" maxlength="10" value="" onchange="chkDate('Date2')" class="datepicker" autocomplete="off" style="margin-top: 5px;margin-bottom: 5px">-->
+                @Html.TextBox("Date2", date2, new { id = "Date2", @class = "datepicker", @style = "width:18%", @autocomplete = "off" })
+            </td>
+            <td height=35 class="clsTableTitleCenter" width="90">
+                <select id="QryKind" name="QryKind" style="height:30px">
+                    @{
+                        string[] kind = { "3", "1", "2", "4", "6", "7", "5" };
+                        string[] kindWord = { "全　部", "已結案", "未結案", "不核准", "已轉件", "已退件", "刪除" };
+                        for (int j = 0; j < kind.Length; j++)
+                        {
+                            if (qryKind == kind[j])
+                            {
+                                <option value=@kind[j] selected="selected">@kindWord[j]</option>
+                            }
+                            else
+                            {
+                                <option value=@kind[j]>@kindWord[j]</option>
+                            }
+                        }
+                    }
+                </select>
+            </td>
+            <td height=35 class="clsTableTitleCenter" width="100" Rowspan=2>
+                <input type='button' name='idQuery' value='查詢' onclick='DoQry()' class="clsButton">
+            </td>
+        </tr>
+        <tr>
+            <td height=35 class="clsTableTitleLeft" colspan=3>
+                關鍵字查詢：<input type="text" id="The_str" name="The_str" size="40" value=@the_str>
+            </td>
+        </tr>
+    </table>
+    <table width="1070" border="0" cellspacing="0" cellpadding="0" align='center' style="width:80%">
+        <tr>
+            @*
+                <td width="1070">
+                <table width="1070" border="1" cellspacing="0" cellpadding="0" id='ColBody' style='BORDER-COLLAPSE:collapse;width:100%'>
+            *@
+            <td>
+                <table border="1" cellspacing="0" cellpadding="0" id='ColBody' style='BORDER-COLLAPSE:collapse;width:100%'>
+                    <tr align='center'>
+                        @*原width 指定數字會有對其落差, 改用%*@
+                        <td height='20' class='clsFiledTitleCenter' width="6%">單號
+                        <td height='20' class='clsFiledTitleCenter' width="7%">申請日期
+                        <td height='20' class='clsFiledTitleCenter' width="5%">申請人
+                        <td height='20' class='clsFiledTitleCenter' width="6%">部門
+                        <td height='20' class='clsFiledTitleCenter' width="19%">主題
+                        <td height='20' class='clsFiledTitleCenter' width="7%">預定完成日
+                        <td height='20' class='clsFiledTitleCenter' width="5%">預定工時
+                        <td height='20' class='clsFiledTitleCenter' width="5%">實際工時
+                        <td height='20' class='clsFiledTitleCenter' width="23%">進度
+                        <td height='20' class='clsFiledTitleCenter' width="17%">狀態
+                </table>
+            </td>
+        </tr>
+        @if (Model != null)
+        {
+            <tr>
+                <td>
+                    <table class="datatableBlue" border="1" cellspacing="0" cellpadding=0 style='BORDER-COLLAPSE:collapse;behavior: url(../library/tablehl.htc);width:100%' id='DataBody' hlColor='#ACACFF' slColor='#ACACFF'>
+                        @*<% =MisServiceList( Request.QueryString("dpno") , Request.QueryString("DateKind") ,Request.QueryString("Date1") ,Request.QueryString("Date2") ,Request.QueryString("QryKind") ,Request.QueryString("The_str") ,Request.QueryString("PageNo") ,Request.QueryString("PageSize") ) %>*@
+
+                        @foreach (var item in Model)
+                        {
+                            {
+                                @* 原ASP 使用變數組成HTML方法會導致字串直接呈現HTML*@
+                            } @*//end of @ { *@
+
+                            <tr height=32 onclick="ShowContent('@item.MS_NO')" style='cursor:pointer'>
+                                <td width='6%' align="center">@item.MS_NO</td>
+                                <td width='7%' align="center">
+                                    @if (@item.MS_DATE1 != null && @item.MS_DATE1.ToString().Trim() != "")
+                                    {
+                                        ms_date1 = @item.MS_DATE1.Value.ToString("yyyy/MM/dd");
+                                    }
+                                    @ms_date1
+                                </td>
+                                <td width='5%' align="center">@item.MS_NAME</td>
+                                @{
+                                    if (@item.MS_DPNAME == null | @item.MS_DPNAME == "")
+                                    {
+                                        ms_dpname = "駐國外部";
+                                    }
+                                    else
+                                    {
+                                        ms_dpname = @item.MS_DPNAME;
+                                    }
+                                }
+                                <td width='6%' align="center">@ms_dpname</td>
+                                <td width='19%' align="left">@item.MS_SUBJECT</td>
+                                <td width='7%' align="center">
+                                    @if (item.MS_PCDATE != null && item.MS_PCDATE.ToString().Trim() != "")
+                                    {
+                                        ms_pcdate = item.MS_PCDATE.Value.ToString("yyyy/MM/dd");
+                                    }
+                                    @ms_pcdate
+                                </td>
+                                <td width='5%' align="center">@item.MS_PCHOUR</td>
+                                <td width='5%' align="center">@item.MS_RCHOUR</td>
+                                <td width='23%' align="center">
+                                    @*原Process*@
+                                    <table border=0 cellspacing=0 cellpadding=0 style="width:100%">
+                                        <tr height=18>
+                                            @if (item.MS_POST.ToString() == "1")
+                                            {
+                                                <td width=40 style='FONT-SIZE:12px;BACKGROUND-COLOR:#FF8000;TEXT-ALIGN:center'>轉審核</td>
+                                                <td width=60 style='FONT-SIZE:12px;BACKGROUND-COLOR:#FFFFFF;TEXT-ALIGN:center'>部門審核</td>
+                                                <td width=60 style='FONT-SIZE:12px;BACKGROUND-COLOR:#FFFFFF;TEXT-ALIGN:center'>資訊審核</td>
+                                            }
+                                            else if (item.MS_POST.ToString() == "3")
+                                            {
+                                                <td width=40 style='FONT-SIZE:12px;BACKGROUND-COLOR:#FF8000;TEXT-ALIGN:center'>轉審核</td>
+
+                                                <td width=60 style='FONT-SIZE:12px;BACKGROUND-COLOR:RED;TEXT-ALIGN:center'>部門審核</td>
+
+                                                <td width=60 style='FONT-SIZE:12px;BACKGROUND-COLOR:#FFFFFF;TEXT-ALIGN:center'>資訊審核</td>
+                                            }
+                                            else if (item.MS_POST.ToString() == "5")
+                                            {
+                                                <td width=40 style='FONT-SIZE:12px;BACKGROUND-COLOR:#FF8000;TEXT-ALIGN:center'>轉審核</td>
+
+                                                <td width=60 style='FONT-SIZE:12px;BACKGROUND-COLOR:RED;TEXT-ALIGN:center'>部門審核</td>
+
+                                                <td width=60 style='FONT-SIZE:12px;BACKGROUND-COLOR:RED;TEXT-ALIGN:center'>資訊審核</td>
+                                            }
+                                            else
+                                            {
+                                                <td width=40 style='FONT-SIZE:12px;BACKGROUND-COLOR:#FFFFFF;TEXT-ALIGN:center'>轉審核</td>
+
+                                                <td width=60 style='FONT-SIZE:12px;BACKGROUND-COLOR:#FFFFFF;TEXT-ALIGN:center'>部門審核</td>
+                                                <td width=60 style='FONT-SIZE:12px;BACKGROUND-COLOR:#FFFFFF;TEXT-ALIGN:center'>資訊審核</td>
+                                            } @*// end if ms_post type*@
+
+                                            @if (item.MS_YN.ToString() == "1")
+                                            {
+                                                <td width=30 style='FONT-SIZE:12px;BACKGROUND-COLOR:#FFFF80;TEXT-ALIGN:center'>接單</td>
+                                            }
+                                            else
+                                            {
+                                                <td width=35 style='FONT-SIZE:12px;BACKGROUND-COLOR:#FFFFFF;TEXT-ALIGN:center'>接單</td>
+                                            }
+
+                                            @if (item.MS_YN1.ToString() == "1")
+                                            {
+                                                <td width=30 style='FONT-SIZE:12px;BACKGROUND-COLOR:#80FF80;TEXT-ALIGN:center'>完工</td>
+                                            }
+                                            else
+                                            {
+                                                <td width=35 style='FONT-SIZE:12px;BACKGROUND-COLOR:#FFFFFF;TEXT-ALIGN:center'>完工</td>
+                                            }
+
+                                            @if (item.MS_CLOSE.ToString() == "1")
+                                            {
+                                                <td width=30 style='FONT-SIZE:12px;BACKGROUND-COLOR:#C0C0C0;TEXT-ALIGN:center'>結單</td>
+                                            }
+                                            else
+                                            {
+                                                <td width=35 style='FONT-SIZE:12px;BACKGROUND-COLOR:#FFFFFF;TEXT-ALIGN:center'>結單</td>
+                                            }
+                                        </tr>
+                                    </table>@*End of Process Table*@
+                                </td>
+                                <td width='17%' align="center">
+                                    @*原Process1*@
+                                    <table border=0 cellspacing=0 cellpadding=0 style="width:100%">
+                                        <tr height=18>
+                                            @if (item.MS_POST.ToString() == "3" | item.MS_POST.ToString() == "5")
+                                            {
+                                                <td width=30 style='FONT-SIZE:12px;BACKGROUND-COLOR:#FF8000;TEXT-ALIGN:center'>核准</td>
+                                                <td width=40 style='FONT-SIZE:12px;BACKGROUND-COLOR:#FFFFFF;TEXT-ALIGN:center'>不核准</td>
+                                            }
+                                            else if (item.MS_POST.ToString() == "4" | item.MS_POST.ToString() == "6")
+                                            {
+                                                <td width=30 style='FONT-SIZE:12px;BACKGROUND-COLOR:#FFFFFF;TEXT-ALIGN:center'>核准</td>
+                                                <td width=40 style='FONT-SIZE:12px;BACKGROUND-COLOR:#FF8000;TEXT-ALIGN:center'>不核准</td>
+                                            }
+                                            else
+                                            {
+                                                <td width=30 style='FONT-SIZE:12px;BACKGROUND-COLOR:#FFFFFF;TEXT-ALIGN:center'>核准</td>
+                                                <td width=40 style='FONT-SIZE:12px;BACKGROUND-COLOR:#FFFFFF;TEXT-ALIGN:center'>不核准</td>
+                                            }
+
+                                            @if (item.MS_POST.ToString() == "7")
+                                            {
+                                                <td width=40 style='FONT-SIZE:12px;BACKGROUND-COLOR:#FFFF80;TEXT-ALIGN:center'>已退件</td>
+                                            }
+                                            else
+                                            {
+                                                <td width=40 style='FONT-SIZE:12px;BACKGROUND-COLOR:#FFFFFF;TEXT-ALIGN:center'>已退件</td>
+                                            }
+
+                                            @if (item.MS_POST.ToString() == "8")
+                                            {
+                                                <td width=40 style='FONT-SIZE:12px;BACKGROUND-COLOR:#FFFF80;TEXT-ALIGN:center'>已轉件</td>
+                                            }
+                                            else
+                                            {
+                                                <td width=40 style='FONT-SIZE:12px;BACKGROUND-COLOR:#FFFFFF;TEXT-ALIGN:center'>已轉件</td>
+                                            }
+
+                                            @if (item.MS_POST.ToString() == "9")
+                                            {
+                                                <td width=30 style='FONT-SIZE:12px;BACKGROUND-COLOR:#FFFF80;TEXT-ALIGN:center'>刪除</td>
+                                            }
+                                            else
+                                            {
+                                                <td width=30 style='FONT-SIZE:12px;BACKGROUND-COLOR:#FFFFFF;TEXT-ALIGN:center'>刪除</td>
+                                            }
+                                        </tr>
+                                    </table>@*end of Process1*@
+                                </td>
+                            </tr>
+                        }@*end of foreach*@
+                    </table>
+                </td>
+            </tr>
+        }@*end of if Model != null*@
+    </table>
+</form>
+
+@*資料大於10筆再顯示跳頁元件*@
+@if (Model.TotalItemCount > 10) //用於判斷筆數, 此變數需與controller 定義筆數一致
+{
+    <div class="d-flex justify-content-center">
+        @Html.PagedListPager(
+          //(PagedList.IPagedList<Data.Models.MisService>)TempData["DataRow"],
+          Model,
+           page => Url.Action("P_23N03_q", "F_23N03", new
+           {
+               dpno = dp_no,
+               DateKind = dateKind,
+               Date1 = date1,
+               Date2 = date2,
+               The_str = the_str,
+               QryKind = qryKind,
+               PageNumber = page,
+               PageSize = PageSize
+           }
+                             ),
+           new PagedListRenderOptions
+           {
+               LinkToFirstPageFormat = "<< 第一頁",
+               LinkToPreviousPageFormat = "< 上一頁",
+               LinkToNextPageFormat = "下一頁 >",
+               LinkToLastPageFormat = "最後一頁 >>",
+               DisplayLinkToFirstPage = PagedListDisplayMode.Always,
+               DisplayLinkToPreviousPage = PagedListDisplayMode.Always,
+               DisplayLinkToNextPage = PagedListDisplayMode.Always,
+               DisplayLinkToLastPage = PagedListDisplayMode.Always,
+               //DisplayLinkToIndividualPages = false,
+               //PageCountAndCurrentLocationFormat = "第 {0} 頁 / 共 {1} 頁",
+               //DisplayPageCountAndCurrentLocation = true,
+               ItemSliceAndTotalFormat = "第 {0} 到 {1} 項 / 共 {2} 項",
+               DisplayItemSliceAndTotal = true
+           })
+    </div>
+}
+
+<script>
+    $(document).ready(function () {
+        replaceButtonText("spl_f1", "列印");
+
+        $("#spl_f1").click(function () {
+            doPrint();
+        });
+    });
+
+    function doPrint() {
+        var Dept = ""; //部門代號
+        var dpname = ""; //部門名稱
+        var DateKind = ""; //日期欄位(申請/完工)
+        var Date1 = ""; //起日
+        var Date2 = ""; //迄日
+        var QryKind = "";//表單類別
+        var sTemp = "";
+
+        Dept = $("#selDep option:selected").val();
+        dpname = $("#selDep option:selected").text();
+        DateKind = $("#DateKind option:selected").val();
+        Date1 = $("#Date1").val().trim();
+        Date2 = $("#Date2").val().trim();
+        QryKind = $("#QryKind option:selected").val();
+        sTemp = $("#The_str").val().trim();
+
+        //rptURL = "<% = The_PrtSvr %>/MisService/mser03_r.asp?dpno=" + dpno + "&DateKind=" + DateKind + "&Date1=" + Date1 + "&Date2=" + Date2 + "&QryKind=" + QryKind + "&The_str=" + The_str + "&dpname=" + dpname;
+        //sFeature = "status:no; center:yes; help:no; dialogWidth:750px ;dialogHeight:550px ;resizable:yes";
+        //retVal = window.showModalDialog(rptURL, null, sFeature);
+        //匯出Excel 取代SAP Crystal Reports 視窗
+        window.location.href = "@base_URL" + "@my_controllername" + "/P_23N03_r?dpno=" + Dept + "&DateKind=" + DateKind + "&Date1=" + Date1 + "&Date2=" + Date2 + "&QryKind=" + QryKind + "&The_str=" + sTemp + "&dpname=" + dpname;
+    }
+
+    function DoQry() {
+        var Dept = ""; //部門
+        var DateKind = ""; //日期欄位(申請/完工)
+        var Date1 = ""; //起日
+        var Date2 = ""; //迄日
+        var QryKind = "";//表單類別
+        var sTemp = "";
+
+        Dept = $("#selDep option:selected").val();
+        DateKind = $("#DateKind option:selected").val();
+        Date1 = $("#Date1").val().trim();
+        Date2 = $("#Date2").val().trim();
+        QryKind = $("#QryKind option:selected").val();
+        sTemp = $("#The_str").val().trim();
+
+
+        //alert(Date1 + "~~" + Date2 + "~~" + sTemp);
+
+        //設定欄位僅可選擇datePicker方式
+        //日期處理嘗試呼叫script/library/Date.js (如無效可先將程式轉貼此View 再偵錯)
+        var checkDtae = ""; //如此變數為空值表正常輸入日期, 否則要重填
+
+        if (Date1 != "") {
+            if (isDate(Date1)) {
+                Date1 = CDate4YYYYMMDD(Date1);
+            } else {
+                //alert(" 起始日:" + Date1 +" 不是有效日期");
+                checkDtae = " 起始日:" + Date1 + " 不是有效日期!\n";
+                $("#Date1").val('');
+            }
+        }
+        if (Date2 != "") {
+            if (isDate(Date2)) {
+                Date2 = CDate4YYYYMMDD(Date2);
+            } else {
+                //alert(" 迄止日:" + Date2 + " 不是有效日期");
+                checkDtae = checkDtae + " 迄止日:" + Date2 + " 不是有效日期!\n";
+                $("#Date2").val('');
+            }
+        }
+
+	    if( Date1 != "" && Date2 != "" ){
+		    if( Date1 > Date2 ){
+			    sTemp = Date1 ;
+			    Date1 = Date2 ;
+			    Date2 = sTemp ;
+		    }
+	    }
+
+        if (checkDtae == "") {
+            window.location.href = "@base_URL" + "@my_controllername" + "/P_23N03_q?dpno=" + Dept + "&DateKind=" + DateKind + "&Date1=" + Date1 + "&Date2=" + Date2 + "&QryKind=" + QryKind + "&The_str=" + sTemp;
+        } else {
+            alert(checkDtae);
+        }
+    }
+
+    function ShowContent(MS_NO) {
+        var MS_NO = MS_NO;
+        //alert("111");
+
+        let h = 550;
+        let w = 720;
+        let top = (screen.height / 2) - (h / 2);
+        let left = (screen.width / 2) - (w / 2);
+
+        //rptURL = "mser03_l.asp?MS_NO=" + MS_NP;
+        //sFeature = "status:no; center:yes; help:no; dialogWidth:720px ;dialogHeight:550px ;resizable:yes";
+        //retVal = window.showModelessDialog(rptURL, null, sFeature);
+
+        window.open("/SYS_23/F_23N03/P_23N03_l?MS_NO=" + MS_NO, "myWindow",
+            config = "width=" + w + ",height=" + h +
+            ",left=" + left + ",top=" + top + ",toolbar=no,menubar=no," +
+            "resizable=yes,status=no,location=no,scrollbars=no")
+
+    }
+</script>

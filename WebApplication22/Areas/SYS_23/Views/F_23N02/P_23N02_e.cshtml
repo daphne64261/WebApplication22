@@ -1,0 +1,874 @@
+﻿@model List<Data.Models.MisService>
+
+@*
+    改寫 Transart\MisService\mser02_e.asp
+    HTML設計補充: 因應內外層table長度無法對齊, 移除fieldset 區塊
+*@
+
+@{
+
+    //連結UrlPath
+    string my_URL = this.Request.Url.ToString();
+    string my_controllername = this.ViewContext.RouteData.Values["controller"].ToString();
+    int i = my_URL.IndexOf(my_controllername);
+    string base_URL = my_URL.Remove(i);
+
+    //接收controller 傳遞變數
+    //string title = ViewBag.Titl;//在前端設定
+    string ms_no = ViewBag.msno;//單號
+    string kind = ViewBag.kind;//種類
+    string ms_noSearch = ViewBag.ms_noSeach;
+    string ms_acemno = ViewBag.emno; ////下面kind=1判斷, 設定接單者參數值(資料如有值, 改用資料表資料)
+    string ms_acemname = ViewBag.ename;////下面kind=1判斷, 設定接單者參數值(資料如有值, 改用資料表資料)
+
+    //依不同操作類別設定Table 樣式
+    string titleWord = "資訊服務需求單--接單確認";
+
+    if (kind == "1")
+    {
+        titleWord = "資訊服務需求單--接單確認--編輯";
+    }
+    else if (kind == "2")
+    {
+        titleWord = "資訊服務需求單--完工回饋--編輯";
+    }
+    else if (kind == "3")
+    {
+        titleWord = "資訊服務需求單--結單--編輯";
+    }
+    else
+    {
+        titleWord = "資訊服務需求單--接單確認--編輯";
+    }
+
+    //為顯示指定日期格式的資料, 但部分資料因null 會導致直接使用@item.Model.value.tostring(yyyy/MM/dd)錯誤, 故宣告空白字串
+    string ms_pcdate = "";
+    string ms_acdate = "";//即使null, 畫面預設顯示今天
+    string ms_rcdate = "";
+    //string ms_schdate = ""; //排程日期
+
+    //辨識資料是否存在, 供異動按鈕辨識
+    string dataExist = "No";
+}
+
+@*編輯後儲存結果確認*@
+@if (TempData["message"] != null)
+{
+    <script type="text/javascript">
+        var message = @Html.Raw(Json.Encode(TempData["message"]));
+        alert(message);
+    </script>
+}
+else
+{
+    //pass
+}
+
+<center>
+    <!--<form method="post" name="Clt_frm" id="Clt_frm" action=""> -->
+    @using (Html.BeginForm("P_23N02_e", "F_23N02", new { KIND = @kind, MS_NO = @ms_no }, FormMethod.Post, new { id = "EditForm", name = "EditForm"}))
+    {
+        @*Kind 請用全大寫KIND, 雖然controller 變數為Kind*@
+        if (Model == null)
+        { 
+            dataExist = "No";
+            <table border=1 cellspacing=0 class=clsFiledTitleCenter bordercolor=#D7DCDD style="BORDER-COLLAPSE: collapse; width:50%">
+                <tr>
+                    <td height=50 colspan=3>查無此資訊服務需求單號：@ms_noSearch</td>
+                </tr>
+            </table>
+            <input type=hidden id=KIND name=KIND value=@kind>
+            <input type=hidden id=MS_ACEMNO name=MS_ACEMNO>
+            <input type=hidden id=MS_ACDATE name=MS_ACDATE>
+        }
+        else
+        {
+            dataExist = "Yes";
+            <!--<table border=0 cellspacing=1 cellpadding=5 height=5 width="675px"> -->
+            <table border=0 cellspacing=1 cellpadding=5 height=5 style="width:50%">
+                <tr>
+                    <!--<td height=25 class='heading' width=475 colspan=3 >-->
+                    <td colspan=3 class='heading2'>@titleWord</td>
+                    <td class='heading2' width=100 align=center>
+                        @if (kind == "2")
+                        {                            
+                            <input type=checkbox id=CloseYN name=CloseYN value=1 style="cursor:pointer;zoom:150%">
+                            <label for="vehicle1">完結</label>
+                        }
+                    </td>
+                    <td class='heading2' width=100 align=center>
+                        @*//				<input type=button value=' 補印申請單 ' onclick="" DoPrint( '" & MS_NO' )"">" *@
+                    </td>
+                </tr>
+                @foreach (var item in Model)
+                {
+                    if (kind == "1")
+                    {
+                        @*接單確認*@
+                        <tr>
+                            <td colspan=5>
+                                <!--<fieldset style="HEIGHT: 80px; PADDING-BOTTOM: 5px; PADDING-LEFT: 5px; PADDING-RIGHT: 5px; PADDING-TOP: 5px; WIDTH: 600px">-->
+                                <table width=675 border=1 cellspacing=0 bordercolor=#D7DCDD style="BORDER-COLLAPSE:collapse;FONT-SIZE:12px;BACKGROUND-COLOR:#FFFF80;TEXT-ALIGN:center;width:100%">
+                                    <tr>
+                                        <td height=25 width=200 align=left>
+                                            &nbsp;  接單確認者：
+                                            @{
+                                                //欄位有值顯示DB資料; 沒值顯示登入者資料
+                                                if (item.MS_ACEMNO != null)
+                                                {
+                                                    ms_acemno = item.MS_ACEMNO;
+                                                }
+                                                @*@Html.EditorFor(modelItem => item.MS_ACEMNO, @ms_acemno, new { id = "MS_ACEMNO", name = "MS_ACEMNO", htmlAttributes = new { @style = "", @maxlength = "3", @size = "3" } })*@
+                                                <input type=text id=MS_ACEMNO name=MS_ACEMNO size=3 maxlength=3 onchange=fn_Clt_emno_Change_Server('MS_ACEMNO','say_acname','MS_ACNAME') value=@ms_acemno>
+                                                <!--
+        <i class="fa fa-search Find_Emp_of_Dept" data-to-value-id="MS_ACEMNO" data-to-text-id="MS_ACNAME" data-dpno-id="MS_DPNO"></i>
+        <img style='CURSOR: hand' onclick="" ShowList('MS_ACEMNO','','employee','em_no,em_cname',1,15,'em_no','em_cname',2)"" src=../images/icon_lookup.gif>
+                                        -->
+                                                <i class="fa fa-search" onclick="ShowList();"></i>
+                                                if (item.MS_ACNAME != null)
+                                                {
+                                                    ms_acemname = item.MS_ACNAME;
+                                                }
+                                                <span id=say_acname name=say_acname>@ms_acemname</span>
+                                                <input type=hidden id=MS_ACNAME name=MS_ACNAME value=@ms_acemname>
+                                            }
+                                        </td>
+                                        <td height=25 width=160 align=left>
+                                            &nbsp;  預定處理工時：
+                                            <input id=MS_PCHOUR name=MS_PCHOUR style='WIDTH: 70px; HEIGHT: 30px' maxLength=5 onchange=chkNum(this) value=@item.MS_PCHOUR autocomplete="off">
+                                        </td>
+                                        <td height=25 width=190 align=left>
+                                            &nbsp;  預定完成日期：
+                                            @{
+                                                if (item.MS_PCDATE != null)
+                                                {
+                                                    ms_pcdate = item.MS_PCDATE.Value.ToString("yyyy/MM/dd");
+                                                }
+                                                else
+                                                {
+                                                    //如資料null, 留白
+                                                    //ms_pcdate = DateTime.Today.ToString();
+                                                }
+                                            }
+                                            @*@Html.TextBoxFor(modelItem => item.MS_PCDATE, @ms_pcdate, new { @class = "datepicker", @style = "width:45%", @autocomplete = "off" })*@
+                                            @*測試過宣告name後, Html 解析的name 還是會變成item.MS_PCDATE*@
+                                            @Html.EditorFor(modelItem => item.MS_PCDATE, @ms_pcdate, new { htmlAttributes = new { @id = "MS_PCDATE", @name = "MS_PCDATE", @class = "datepicker", @style = "width:45%", @autocomplete = "off", onchange = "chkDate(this)" } })
+
+                                            @*
+        <input id=MS_PCDATE name=MS_PCDATE style='WIDTH: 70px; HEIGHT: 22px' maxLength=10 onchange=chkDate('MS_PCDATE') value='" & MS_PCDATE'>
+        <IMG style='CURSOR:hand' onclick="" showCalendar('MS_PCDATE')"" height=13 src=../images/date_picker.gif width=13>
+                                            *@
+                                        </td>
+                                        <td height=25 width=135 align=left>
+                                            @{
+                                                if (item.MS_ACDATE != null)
+                                                {
+                                                    ms_acdate = item.MS_ACDATE.Value.ToString("yyyy/MM/dd");
+                                                }
+                                                else
+                                                {
+                                                    ms_acdate = DateTime.Today.ToString();
+                                                }
+                                            }
+                                            接單日期：
+                                            <input id=MS_ACDATE name=MS_ACDATE style='WIDTH: 70px; HEIGHT: 22px' maxLength=10 readonly class='clsListStyle02' value=@ms_acdate>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td height=25 colspan=4 align=left>
+                                            &nbsp;  接單退件說明：
+                                            @*@Html.TextAreaFor(modelItem => item.MS_ACBACKMEMO, new { id = "MS_ACBACKMEMO", name = "MS_ACBACKMEMO", @style="col:100;max-width:84%"})*@
+                                        <br />&nbsp;  <TextArea id=MS_ACBACKMEMO name=MS_ACBACKMEMO Rows=3 cols=100 style="max-width:100%">@item.MS_ACBACKMEMO</TextArea>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                    }
+                    else if (kind == "2")
+                    {
+                        @*完工回饋*@
+                        <tr>
+                            <td colspan=5>
+                                <!--<fieldset style="HEIGHT: 40px; PADDING-BOTTOM: 5px; PADDING-LEFT: 5px; PADDING-RIGHT: 5px; PADDING-TOP: 5px; WIDTH: 600px">-->
+                                <table width=675 border=1 cellspacing=0 bordercolor=#D7DCDD style="BORDER-COLLAPSE:collapse;FONT-SIZE:12px;BACKGROUND-COLOR:#80FF80;TEXT-ALIGN:center;width:100%">
+                                    <tr>
+                                        <td height=25 width=335 align=left>
+                                            &nbsp;  實際處理工時：
+                                            <input id=MS_RCHOUR name=MS_RCHOUR style='WIDTH: 80px; HEIGHT: 30px' maxLength=5 onchange=chkNum(this) value=@item.MS_RCHOUR autocomplete="off">
+                                        </td>
+                                        <td height=25 width=170 align=left>
+                                            &nbsp;  排程日期：
+                                            @*預設不填寫資料, 不設值
+        @Html.TextBoxFor(modelItem => item.MS_SCHDATE, @ms_schdate, new { @class = "datepicker", @style = "width:45%", @autocomplete = "off" })
+                                            *@
+                                            @Html.TextBoxFor(modelItem => item.MS_SCHDATE, new { id = "MS_SCHDATE", name = "MS_SCHDATE", @class = "datepicker", @style = "width:45%", @autocomplete = "off", @onchange = "chkDate(this)" })
+                                            @*
+         <input id=MS_SCHDATE name=MS_SCHDATE style='WIDTH: 70px; HEIGHT: 22px' maxLength=10 onchange=chkDate('MS_SCHDATE') value='" & MS_SCHDATE'>
+        <IMG style='CURSOR:hand' onclick="" showCalendar('MS_SCHDATE')"" height=13 src=../images/date_picker.gif width=13>
+                                            *@
+                                        </td>
+                                        <td height=25 width=170 align=left>
+                                            @*
+                                                                                完工日期："
+                                                //sHtml=sHtml          	<input id=MS_RCDATE name=MS_RCDATE style='WIDTH: 70px; HEIGHT: 22px' maxLength=10 onchange=chkDate('MS_RCDATE') value='" & MS_RCDATE' >"
+                                                //sHtml=sHtml  			<IMG style='CURSOR:hand' onclick=""showCalendar('MS_RCDATE')"" height=13 src=../images/date_picker.gif width=13>"
+                                            *@
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td height=25 colspan=3 align=left>
+                                            &nbsp;  延誤通知內容：
+                                            <br>&nbsp;  <TextArea id=MS_MEMO1 name=MS_MEMO1 Rows=4 cols=90 style="max-width:84%">@item.MS_MEMO1</TextArea>
+                                            <br>&nbsp;  預定完成日期：
+                                            @*預設不用填值 (若未宣告name, 後端controller form 取值要用item.MS_PCDATE*@
+                                            @Html.TextBoxFor(modelItem => item.MS_PCDATE, new { id = "MS_PCDATE", name = "MS_PCDATE", @class = "datepicker", @style = "width:11%", @autocomplete = "off" })
+
+                                            @*
+        <input id=MS_PCDATE name=MS_PCDATE style='WIDTH: 70px; HEIGHT: 22px' maxLength=10 onchange=chkDate('MS_PCDATE') value='" & MS_PCDATE'>
+        <IMG style='CURSOR:hand' onclick="" showCalendar('MS_PCDATE')"" height=13 src=../images/date_picker.gif width=13>
+                                            *@
+                                            <input type=button align=Right value='發送延誤通知' onclick='DelaySave()'>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td height=25 colspan=3 align=left>
+                                            &nbsp;  完工說明：
+                                            <br>&nbsp;  <TextArea id=MS_MEMO2 name=MS_MEMO2 Rows=4 cols=90 style="max-width:84%">@item.MS_MEMO2</TextArea>
+                                        </td>
+                                    </tr>
+                                    <tr></tr>
+                                    <tr></tr>
+                                    <tr></tr>
+                                </table>
+                                <!--</fieldset>-->
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan=5>
+                                <!--<fieldset style="HEIGHT: 40px; PADDING-BOTTOM: 5px; PADDING-LEFT: 5px; PADDING-RIGHT: 5px; PADDING-TOP: 5px; WIDTH: 600px">-->
+                                <table width=675 border=1 cellspacing=0 bordercolor=#D7DCDD style='BORDER-COLLAPSE:collapse;FONT-SIZE:12px;BACKGROUND-COLOR:#FFFF80;TEXT-ALIGN:center;width:100%'>
+                                    <tr>
+                                        @*此列資料僅顯示不能編輯*@
+                                        <td height=25 width=150 align=left>
+                                            &nbsp;  接單確認者：@item.MS_ACNAME
+                                            <input type=hidden id=MS_ACEMNO name=MS_ACEMNO value=@item.MS_ACEMNO>
+                                            <input type=hidden id=MS_ACNAME name=MS_ACNAME value=@item.MS_ACNAME>
+                                        </td>
+                                        <td height=25 width=130 align=left>
+                                            @{ 
+                                                if (item.MS_PCDATE != null)
+                                                {
+                                                    ms_pcdate = item.MS_PCDATE.Value.ToString("yyyy/MM/dd");
+                                                }
+                                                else
+                                                {
+                                                    //如資料null, 變數ms_pcdate一開始已宣告""
+                                                    //ms_pcdate = ""
+                                                }
+                                            }
+                                           
+                                            &nbsp;  預定處理工時：@item.MS_PCHOUR
+                                        </td>
+                                        <td height=25 width=170 align=left>
+                                            &nbsp;  預定完成日期：@ms_pcdate
+                                        </td>
+                                        <td height=25 width=225 align=left>
+                                            @{ 
+                                                if (item.MS_ACDATE != null)
+                                                {
+                                                    ms_acdate = item.MS_ACDATE.Value.ToString("yyyy/MM/dd");
+                                                }
+                                                else
+                                                {
+                                                    //如資料null, 變數ms_pcdate一開始已宣告""
+                                                    //ms_acdate = ""
+                                                }
+                                            }
+                                            &nbsp;  接單日期：@ms_acdate
+                                        </td>
+                                    </tr>
+                                </table>
+                                <!--</fieldset>-->
+                            </td>
+                        </tr>
+                    }
+                    else if (kind == "3")
+                    {
+                        @*結單*@
+                        <tr>
+                            <td colspan=5>
+                                <!--<fieldset style="HEIGHT: 40px; PADDING-BOTTOM: 5px; PADDING-LEFT: 5px; PADDING-RIGHT: 5px; PADDING-TOP: 5px; WIDTH: 600px">-->
+                                <table width=675 border=1 cellspacing=0 bordercolor=#D7DCDD style='BORDER-COLLAPSE:collapse;FONT-SIZE:12px;BACKGROUND-COLOR:#80FF80;TEXT-ALIGN:center;width:100%'>
+                                    <tr>
+                                        <td height=25 colspan=4 align=left>
+                                            &nbsp;　佈告主題：
+                                            <input id=pr_subject name=pr_subject style='WIDTH: 500px; HEIGHT: 22px' maxLength=100>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td height=25 colspan=4 align=left>
+                                            &nbsp;　佈告內容：
+                                            <br>　<TextArea id=pr_content name=pr_content R佈告主題：ows=4 cols=90 style="max-width:84%">@item.MS_MEMO2</TextArea>
+                                        </td>
+                                    </tr>
+                                </table>
+                                <!--</fieldset>-->
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan=5>
+                                <!--<fieldset style="HEIGHT: 40px; PADDING-BOTTOM: 5px; PADDING-LEFT: 5px; PADDING-RIGHT: 5px; PADDING-TOP: 5px; WIDTH: 600px">-->
+                                <table width=675 border=1 cellspacing=0 bordercolor=#D7DCDD style="BORDER-COLLAPSE:collapse;FONT-SIZE:12px;BACKGROUND-COLOR:#C0C0C0;TEXT-ALIGN:center;width:100%">
+                                    <tr>
+                                        <td height=25 width=300 align=left>
+                                            &nbsp;　實際處理工時：@item.MS_RCHOUR
+                                        </td>
+                                        <td height=25 align=left>
+                                            @{
+                                                if (item.MS_RCDATE != null)
+                                                {
+                                                    ms_rcdate = item.MS_RCDATE.Value.ToString("yyyy/MM/dd");
+                                                }
+                                                else
+                                                {
+                                                    //如資料null, 變數ms_pcdate一開始已宣告""
+                                                    //ms_rcdate = ""
+                                                }
+                                            }
+
+                                            &nbsp;　完工日期：@ms_rcdate
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td height=25 width=675 align=left colspan=2>
+                                            &nbsp;　完工說明：
+                                            @*
+        sHtml = sHtml & Replace(MS_MEMO2, CHR(10), "<br>　")
+                                            *@
+                                            <br>　 <input type=hidden id=MS_MEMO2 name=MS_MEMO2 value=@item.MS_MEMO2>
+                                        </td>
+                                    </tr>
+                                </table>
+                                <!--fieldset>-->
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan=5>
+                                <!--<fieldset style="HEIGHT: 40px; PADDING-BOTTOM: 5px; PADDING-LEFT: 5px; PADDING-RIGHT: 5px; PADDING-TOP: 5px; WIDTH: 600px">-->
+                                <table width=675 border=1 cellspacing=0 bordercolor=#D7DCDD style='BORDER-COLLAPSE:collapse;FONT-SIZE:12px;BACKGROUND-COLOR:#FFFF80;TEXT-ALIGN:center; width:100%'>
+                                    <tr>
+                                        <td height=25 width=150 align=left>
+                                            &nbsp;  接單確認者：@item.MS_ACNAME
+                                            <input type=hidden id=MS_ACEMNO name=MS_ACEMNO value=@item.MS_ACEMNO>
+                                            <input type=hidden id=MS_ACNAME name=MS_ACNAME value=@item.MS_ACNAME>
+                                        </td>
+                                        <td height=25 width=130 align=left>
+                                            &nbsp;  預定處理工時：@item.MS_PCHOUR
+                                        </td>
+                                        <td height=25 width=170 align=left>
+                                            @{
+                                                if (item.MS_PCDATE != null)
+                                                {
+                                                    ms_pcdate = item.MS_PCDATE.Value.ToString("yyyy/MM/dd");
+                                                }
+                                                else
+                                                {
+                                                    //如資料null, 變數ms_pcdate一開始已宣告""
+                                                    //ms_pcdate = ""
+                                                }
+                                            }
+                                            &nbsp;　預定完成日期：@ms_pcdate
+                                        </td>
+                                        <td height=25 width=225 align=left>
+
+                                            @{
+                                                if (item.MS_ACDATE != null)
+                                                {
+                                                    ms_acdate = item.MS_ACDATE.Value.ToString("yyyy/MM/dd");
+                                                }
+                                                else
+                                                {
+                                                    //如資料null, 變數ms_pcdate一開始已宣告""
+                                                    //ms_acdate = ""
+                                                }
+                                            }
+                                            &nbsp;　接單日期：@ms_acdate
+                                        </td>
+                                    </tr>
+                                </table>
+                                <!--</fieldset>-->
+                            </td>
+                        </tr>
+                    }@*if*@
+                    <tr>
+                        <td colspan=5>
+                            <!--<fieldset style="HEIGHT: 40px; PADDING-BOTTOM: 5px; PADDING-LEFT: 5px; PADDING-RIGHT: 5px; PADDING-TOP: 5px; WIDTH: 600px">-->
+                            <!--<table width=675 border=1 cellspacing=0 class=clsFiledTitleCenter bordercolor=#D7DCDD style=BORDER-COLLAPSE: collapse>-->
+                            <table border=1 cellspacing=0 class=clsFiledTitleCenter bordercolor=#D7DCDD style="BORDER-COLLAPSE: collapse;width:100%">
+                                <tr>
+                                    <td height=25 colspan=3 align=left>
+                                        <B>　編號：</B>@item.MS_NO
+                                        <input type=hidden id=MS_NO name=MS_NO value=@item.MS_NO>
+                                        <input type=hidden id=KIND name=KIND value=@kind>
+                                        <input type=hidden id=MS_DPNO name=MS_DPNO value=@item.MS_DPNO>
+                                        <input type=hidden id=MS_DPNAME name=MS_DPNAME value=@item.MS_DPNAME>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td height=25 width=120 align=left>
+                                        <B>	　廠別：</B>台灣廠
+                                        <input type=hidden id=FANAME name=FANAME value='台灣廠'>
+                                    </td>
+                                    <td height=25 width=175 align=left>
+                                        &nbsp;  <B>	　申請部門：</B>@item.MS_DPNAME
+                                    </td>
+                                    <td height=25 width=175 align=left>
+                                        <B>	　申請者：</B>
+                                        <span id=say_name name=say_name>
+                                            @item.MS_NAME
+                                        </span>
+                                        <input type=hidden id=MS_EMNO name=MS_EMNO value=@item.MS_EMNO>
+                                        <input type=hidden id=MS_NAME name=MS_NAME value=@item.MS_NAME>
+                                    </td>
+                                    <td height=25 width=205 align=left>
+                                        <B>	　申請日期：</B>@item.MS_DATE1.Value.ToString("yyyy/MM/dd")
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td height=25 colspan=3 align=left>
+                                        <B>	　附件：</B>@item.MS_ATTACH 張
+                                    </td>
+                                    <td height=25 align=left>
+                                        <B>	　希望完成日期：</B>@item.MS_DATE2.Value.ToString("yyyy/MM/dd")
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td height=25 colspan=4 align=left>
+                                        <B>	　資訊服務主題項目：</B>@item.MS_SUBJECT
+                                        <input type=hidden id=MS_SUBJECT name=MS_SUBJECT value=@item.MS_SUBJECT>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td align=left colspan=4>
+                                        &nbsp;  <B>	　修改依據說明：</B>
+                                        @*Replace(MS_CONTENT2,CHR(10) ,"<br>　" ) *@
+                                        <br>　 @item.MS_CONTENT2
+                                        <input type=hidden id=MS_CONTENT2 name=MS_CONTENT2 value=@item.MS_CONTENT2>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td align=left colspan=4>
+                                        <B>	　資訊服務內容：</B>
+                                        @*" & Replace(MS_CONTENT1,CHR(10) ,"<br>　" )*@
+                                        @*  &nbsp;  &nbsp;  @item.MS_CONTENT1*@
+                                        <br>　 @item.MS_CONTENT1
+                                        <input type=hidden id=MS_CONTENT1 name=MS_CONTENT1 value=@item.MS_CONTENT1>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <input type=hidden id=MS_ATTACH name=MS_ATTACH value=@item.MS_ATTACH>
+                                        <input type=hidden id=MS_DATE1 name=MS_DATE1 value=@item.MS_DATE1>
+                                        <input type=hidden id=MS_DATE2 name=MS_DATE2 value=@item.MS_DATE2>
+                                    </td>
+                                </tr>
+                            </table>
+                            <!--</fieldset>-->
+                        </td>
+                    </tr>
+                }@*foreach*@
+            </table>
+        }
+        <!--</form>-->
+  }
+</center>
+
+<script>
+    var dataExist = "@dataExist";
+    var kindJS = "@kind"; // 直接取用@Kind 變數會失敗, 故轉存JS變數
+    $(document).ready(function () {
+        //設定TopButton按鈕顯示與動作
+        //alert(kindJS);//ok
+
+        if (kindJS == "1") {
+            replaceButtonText("spl_save", "接單儲存"); //測試\r \n <br>無法斷行
+            replaceButtonText("spl_cancel", "接單退件");
+        } else if (kindJS == "2") {
+            replaceButtonText("spl_save", "完工儲存");
+            replaceButtonText("spl_cancel", "完工退件");
+        } else if (kindJS == "3") {
+            replaceButtonText("spl_save", "結單儲存");
+            replaceButtonText("spl_cancel", "結單退件");
+        } else {
+            replaceButtonText("spl_save", "接單儲存");
+            replaceButtonText("spl_cancel", "接單退件");
+        }
+
+        $("#spl_qry").show(); //顯示按鈕
+        $("#spl_save").show(); //顯示按鈕
+        $("#spl_cancel").show(); //顯示按鈕
+
+        //測試發現, 如果一開始TopButton.cshtml 載入無此元素, 以下作法仍不會秀出按鈕
+        replaceButtonText("spl_f2", "接單確認");
+        replaceButtonText("spl_f3", "完工回饋");
+        replaceButtonText("spl_f5", "轉件");
+
+        //若查無資料, 停用異動按鈕
+        if (dataExist != "Yes") {
+            document.getElementById("spl_save").setAttribute("disabled", true);//反灰停用接單儲存按鈕
+            document.getElementById("spl_cancel").setAttribute("disabled", true);//反灰停用接單退件按鈕
+            document.getElementById("spl_f2").setAttribute("disabled", true);//反灰停用接單確認按鈕
+            document.getElementById("spl_f3").setAttribute("disabled", true);//反灰停用完工回饋按鈕
+            document.getElementById("spl_f5").setAttribute("disabled", true);//反灰停用轉件按鈕
+        }
+
+        $("#spl_qry").click(function () {
+            //alert("spl_qry");
+            //點選查詢按鈕 spl_qry
+            //未檢查是否有欄位值異動, 故以下檢查暫不做
+            /*
+             * if (dataExist == "Yes") {
+                if (confirm("確定不存檔資料？")) {
+                */
+            window.location.href = "@base_URL" + "@my_controllername" + "/P_23N02_l";
+        });
+
+        $("#spl_f2").click(function () {
+            //點選接單確認
+            //alert("section f2");
+            window.location.href = "@base_URL" + "@my_controllername" + "/P_23N02_l?Kind=1";
+        });
+
+        $("#spl_f3").click(function () {
+            //點選完工回饋
+            //alert("section f3");
+            window.location.href = "@base_URL" + "@my_controllername" + "/P_23N02_l?Kind=2";
+        });
+
+        $("#spl_f5").click(function () {
+            //點選轉件
+            //alert("section f5");
+            if (confirm("確定要將此件轉系統程式異動申請單？")) {
+                //document.Clt_frm.action="library/MisService_wfls.asp?wfls_Action=wfl_MisService_Trun()";
+                var s = $("form").attr("action");
+                s = s.replace("P_23N02_e", "wfl_MisService_Trun");
+                $("form").attr("action", s);
+                //$("form").submit();//測試可成功轉導http://localhost:51962/SYS_23/F_23N02/wfl_MisService_Trun?KIND=1&MS_NO=IS031201??
+                document.forms["EditForm"].submit();
+            }
+        });
+
+        $("#spl_cancel").click(function () {
+            DoBack();
+        });
+
+        $("#spl_save").click(function () {
+            Save();
+        });
+
+        //採用預設datepicker樣式, 不再自訂
+        @*
+        //為顯示日期資訊避免空白加入自訂datePickerclass
+
+        $(".MS_PCDATE").datepicker(
+            {
+                autoSize: true,
+                changeMonth: true,
+                changeYear: true,
+                showButtonPanel: true
+            }
+        ).datepicker("option", $.datepicker.regional['zh-TW'])
+            .datepicker("option", "dateFormat", "yy/mm/dd")
+            .datepicker("setDate", "@ms_pcdate");
+
+       *@
+    });
+
+    function DoBack() {
+        var confirmMsg = "";
+        var alertMsg = "";
+        if (kindJS == "1") {
+            confirmMsg = "確定要將此件退回？";
+        } else if (kindJS == "2") {
+            confirmMsg = "確定要將此件退回接單確認？";
+        } else if (kindJS == "3") {
+            confirmMsg = "確定要將此件退回完工回饋？";
+        } else {
+            confirmMsg = "確定要將此件退回？";
+        }
+
+        if (confirm(confirmMsg)) {
+            //以下判斷原程式未寫, 改寫後將退件原因改為必填供查核
+            if (kindJS == "1") {
+                if ($("#MS_ACBACKMEMO").val() == null | $("#MS_ACBACKMEMO").val().trim() == "") {
+                    alertMsg = "請填寫退件說明!\n";
+                }
+            }
+            if (alertMsg == "") {
+                //document.Clt_frm.action="library/MisService_wfls.asp?wfls_Action=wfl_MisService_Back()";
+                var s = $("form").attr("action");
+                s = s.replace("P_23N02_e", "wfl_MisService_Back");
+                $("form").attr("action", s);
+                $("form").submit();
+                //document.forms["EditForm"].submit();
+            }
+        }
+    }
+
+    function Save() {
+         //alert("section Save");
+        
+        var alertMsg = "";
+        //先取得目前時間比較填寫日期是否為過去日期
+        var dt = new Date();
+        var dtStr = dt.getFullYear() + "/" + (dt.getMonth() + 1) + "/" + dt.getDate();//month 0表一月, 故須加1
+        var nowStr = CDate4YYYYMMDD(dtStr);
+       
+        if (kindJS == "1") {
+            if ($("#MS_ACEMNO").val() == null | $("#MS_ACEMNO").val().trim() == "") {
+                alertMsg = "請輸入接單確認者！\n";
+            }
+
+            if ($("#MS_PCHOUR").val() == null | $("#MS_PCHOUR").val().trim() == "") {
+                alertMsg = alertMsg + "請輸入預計處理工時！\n";
+            } else {
+                if (isNaN($("#MS_PCHOUR").val().trim())) {
+                    alertMsg = alertMsg + "預計處理工時請輸入數字！！\n";
+                } else {
+                    //pass other check
+                }
+            }           
+
+            if ($("#MS_PCDATE").val() == null | $("#MS_PCDATE").val().trim() == "") {
+                alertMsg = alertMsg + "請輸入預計完成日期！\n";
+            } else {
+                if (!isDate($("#MS_PCDATE").val())) { //使用Script\library\Date.js 函式
+                    alertMsg = alertMsg + "請輸入合理的預計完成日期！\n";
+                } else {
+
+                    if ($("#MS_PCDATE").val().trim() < nowStr) {
+                        alertMsg = alertMsg + "預計完成日期不得選取過去日期！\n";
+                    } else {
+                        //pass
+                    }
+                }
+            }
+        } else if (kindJS == "2") {
+            //因Kind=2可能同時更改MS_PCDATE或MS_SCHDATE, 故僅MS_SCHDATE實作onchnage 確認日期填值
+            //MS_PCDATE在儲存當下才檢查
+            if ($("#MS_PCDATE").val() == null | $("#MS_PCDATE").val().trim() == "") {
+                alertMsg = alertMsg + "請輸入預計完成日期！\n";
+                $("#MS_SCHDATE").val(nowStr);
+            } else {
+                if (!isDate($("#MS_PCDATE").val())) { //使用Script\library\Date.js 函式
+                    alertMsg = alertMsg + "請輸入合理的預計完成日期！\n";
+                    $("#MS_SCHDATE").val(nowStr);
+                } else {
+
+                    if ($("#MS_PCDATE").val().trim() < nowStr) {
+                        alertMsg = alertMsg + "預計完成日期不得選取過去日期！\n";
+                        $("#MS_SCHDATE").val(nowStr);
+                    } else {
+                        //pass
+                    }
+                }
+            }
+
+            if ($("#MS_SCHDATE").val() == null | $("#MS_SCHDATE").val().trim() == "") {
+                alertMsg = alertMsg + "請輸入排程日期！\n";
+            } else {
+                if (!isDate($("#MS_SCHDATE").val())) { //使用Script\library\Date.js 函式
+                    alertMsg = alertMsg + "請輸入合理的排程日期！\n";
+                } else {
+
+                    if ($("#MS_SCHDATE").val().trim() < nowStr) {
+                        alertMsg = alertMsg + "排程日期不得選取過去日期！\n";
+                    } else {
+                        //pass
+                    }
+                }
+            }
+            var check = $("#CloseYN").is(":checked");
+            if (check) {
+                //alert("checked");
+
+                if ($("#MS_RCHOUR").val() == null | $("#MS_RCHOUR").val().trim() == "") {
+                    alertMsg = alertMsg + "請輸入實際處理工時！\n";
+                } else {
+                    if (isNaN($("#MS_RCHOUR").val().trim())) {
+                        alertMsg = alertMsg + "實際處理工時請輸入數字！\n";
+                    } else {
+                        //pass other check
+                    }
+                }                
+            } else {
+                //alert("no");
+            }
+
+            
+        } else if (kindJS == "3") {
+            //pass
+        } else {
+            //pass
+        }
+
+        if (alertMsg != "") {
+            alert(alertMsg);
+        } else {
+            document.forms["EditForm"].submit();
+        }
+    }
+
+    function chkNum(hour) {
+        //當附件欄位值異動時被觸發
+        var hourNum = hour.value.trim();
+        var kindJS = "@kind"; // 直接取用@Kind 變數會失敗, 故轉存JS變數
+
+        if (hourNum != "") {
+            if (isNaN(hourNum)) {
+                //非有效數字才會回傳true
+
+                if (kindJS == "1") {
+                    $("#MS_PCHOUR").val("0");//將值改回0再alert
+                    alert("預定處理工時請輸入數字！");
+                } else if (kindJS == "2") {
+                    $("#MS_RCHOUR").val("0");//將值改回0再alert
+                    alert("實際處理工時請輸入數字！");
+                }
+            }
+        }
+    }
+
+    function replaceButtonText(buttonId, text) {
+        if (document.getElementById) {
+            var button = document.getElementById(buttonId);
+            if (button) {
+                if (button.childNodes[0]) {
+                    button.childNodes[0].nodeValue = text;
+                }
+                else if (button.value) {
+                    button.value = text;
+                }
+                else //if (button.innerHTML)
+                {
+                    button.innerHTML = text;
+                }
+            }
+        }
+    }
+
+    function fn_Clt_emno_Change_Server(ms_acemno, say_acname, ms_acname) {
+        ('MS_ACEMNO', 'say_acname', 'MS_ACNAME')
+        //搭配手動改員工工號時, 驗證資料是否有效與取得相關資料
+        var ms_acemno = $("#MS_ACEMNO").val();
+        var empInfo = "";
+        //var empInfo;
+        var empItem = new Array(3);
+        $.ajax({
+            url: '@Url.Action("checkEmp", "../CommonCheck")',
+            data: { emno: ms_acemno },
+            success: function (data) {
+                //call is successfully completed and we got result in data
+                if (data == null || data == "fail") {
+                    alert("您輸入的員工編號 " + ms_acemno + " 不存在!!");
+                    $("#MS_EMNO").val('');//清空欄位值
+                } else {
+                    empInfo = data;
+                    empItem = empInfo.split("!");//切割字串(姓名,部門代碼,部門名稱)
+                    //成功取得資料後再能設值
+                    if (empItem[2] != null && empItem[2] != "") {
+                        $("#MS_ACNAME").val(empItem[0]);
+                        $("#say_acname").text(empItem[0]);
+                        //接單者不需記錄部門與部門名稱, 故不處理
+
+                        //第一次輸入異動執行
+                        //alert("fn_Clt_emno_Change_Server3: " + $("#selDep").val() + "==" + $("#selDep option:selected").text());
+                    } else {
+                        //alert("fn_Clt_emno_Change_Server 3else: " + $("#selDep").val() + "==" + $("#selDep option:selected").text());
+                    }
+                }
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                //some errror, some show err msg to user and log the error
+                alert(xhr.responseText);
+            }
+        });
+    }
+
+    function emp_update(em_no, em_cname, em_dpno) {
+        //搭配下面點選放大鏡ShowList找員工清單, 更新相關欄位值
+        $("#MS_ACEMNO").val(em_no);
+        $("#MS_ACNAME").val(em_cname);
+        $("#say_acname").text(em_cname);
+        //接單著不需用到部門資訊, 但因公用呼叫函式有部門代碼故保留
+    }
+
+    function ShowList() {
+        //點選放大鏡找員工清單, 搭配上面emp_update更新相關欄位值
+        let h = screen.availHeight / 2;
+        let w = screen.availWidth * 2 / 3;
+        let top = h / 2;
+        let left = screen.availWidth / 6;
+        window.open("/Popup/ShowList_employee", "myWindow",
+            config = "width=" + w + ",height=" + h +
+            ",left=" + left + ",top=" + top + ",toolbar=no,menubar=no," +
+            "resizable=no,status=no,location=no,scrollbars=no")
+    }
+
+    //儲存延誤通知，並發送通知信
+    function DelaySave() {
+        //document.Clt_frm.action = "library/MisService_wfls.asp?wfls_Action=wfl_MisService_Update3()";
+        //document.Clt_frm.submit();
+        var s = $("form").attr("action");
+        s = s.replace("P_23N02_e", "wfl_MisService_Update3");
+        $("form").attr("action", s);
+        $("form").submit();
+    }
+
+    function chkDate(dtInput) {
+        var dtData = dtInput.value.trim();
+        //alert(dtData);
+
+        var kindJS = "@kind"; // 直接取用@Kind 變數會失敗, 故轉存JS變數
+        var msg = "";//依kind 說明日期訊息
+        var alertMsg = "0";
+
+        if (kindJS == "1") {
+            msg = "預定完成";
+        } else if (kindJS == "2") {
+            msg = "排程";
+        }
+
+        //先取得目前時間比較填寫日期是否為過去日期
+        var dt = new Date();
+        var dtStr = dt.getFullYear() + "/" + (dt.getMonth() + 1) + "/" + dt.getDate();//month 0表一月, 故須加1
+        var nowStr = CDate4YYYYMMDD(dtStr);
+
+        if (dtData == null | dtData == "") {
+            alertMsg = "1";
+        } else {
+            if (!isDate(dtData)) { //使用Script\library\Date.js 函式
+                alertMsg = "1";
+                alert("請輸入合理的" + msg +"日期！\n");
+            } else {
+
+                if (dtData < nowStr) {
+                    alertMsg = "1";
+                    alert (msg +"日期不得選取過去日期！\n");
+                } else {
+                    //pass
+                }
+            }
+        }
+        if (alertMsg == "1") {
+            if (kindJS == "1") {
+                $("#MS_PCDATE").val(nowStr);
+            } else if (kindJS == "2") {
+                $("#MS_SCHDATE").val(nowStr);
+            }
+        }
+    }
+
+</script>
+

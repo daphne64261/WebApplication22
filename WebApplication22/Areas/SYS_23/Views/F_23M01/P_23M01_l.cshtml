@@ -1,0 +1,93 @@
+﻿@model PagedList.IPagedList<Data.Models.computer>
+@using PagedList.Mvc;
+@Styles.Render("~/Content/css")
+<style>
+    #ShowList_Table {
+        width: 50%
+    }
+
+        #ShowList_Table th,
+        #ShowList_Table tr,
+        #ShowList_Table td {
+            margin: 0;
+            padding: 0;
+        }
+</style>
+@{
+    string m_com_no1 = ViewBag.com_no1;
+    string m_com_no2 = ViewBag.com_no2;
+    int m_com_kind = ViewBag.com_kind;
+    string m_com_ip = ViewBag.com_ip;
+    string m_com_cname = ViewBag.com_cname;
+    string m_com_no3 = ViewBag.com_no3;
+    int m_page_number = ViewBag.page_number;
+    int m_page_size = ViewBag.page_size;
+}
+@if (Model.Count > 0)
+{
+    <div class="d-flex justify-content-center">
+        <table class="table table-bordered table-hover table-condensed" cellpadding="0" cellspacing="0" style="width:50%">
+            <thead class="bg-info text-left">
+                <tr>
+                    <th>
+                        設備編號
+                    </th>
+                    <th>
+                        設備名稱
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr onclick="window.opener.location.href='@Url.Action("P_23M01_e", "F_23M01", new { com_dsn = item.com_dsn })'">
+                        <td>
+                            @Html.DisplayFor(modelitem => item.com_no)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelitem => item.com_name)
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <div class="d-flex justify-content-center">
+        @Html.PagedListPager(
+                 Model,
+                 page => Url.Action("P_23M01_l", "F_23M01", new
+                 {
+                     com_no1 = m_com_no1,
+                     com_no2 = m_com_no2,
+                     com_kind = m_com_kind,
+                     com_ip = m_com_ip,
+                     com_cname = m_com_cname,
+                     com_no3 = m_com_no3,
+                     page_number = page,
+                     page_size = m_page_size
+                 }
+                                 ),
+                 new PagedListRenderOptions
+                 {
+                     LinkToFirstPageFormat = "<< 第一頁",
+                     LinkToPreviousPageFormat = "< 上一頁",
+                     LinkToNextPageFormat = "下一頁 >",
+                     LinkToLastPageFormat = "最後一頁 >>",
+                     DisplayLinkToFirstPage = PagedListDisplayMode.Always,
+                     DisplayLinkToPreviousPage = PagedListDisplayMode.Always,
+                     DisplayLinkToNextPage = PagedListDisplayMode.Always,
+                     DisplayLinkToLastPage = PagedListDisplayMode.Always,
+                     DisplayLinkToIndividualPages = false
+                     //PageCountAndCurrentLocationFormat = "第 {0} 頁 / 共 {1} 頁",
+                     //DisplayPageCountAndCurrentLocation = true,
+                     //ItemSliceAndTotalFormat = "第 {0} 到 {1} 項 / 共 {2} 項",
+                     //DisplayItemSliceAndTotal = true
+                 })
+    </div>
+}
+else
+{
+    <div class="d-flex justify-content-center">
+        <h3>查無資料</h3>
+    </div>
+}

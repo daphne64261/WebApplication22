@@ -1,0 +1,91 @@
+﻿@using Common.Menu
+@model Data.Models.vehicle
+@{
+    SelectList car_type_list = new Car_Type_List();
+    SelectList car_kind_list = new Car_Kind_List();
+}
+@using (Html.BeginForm("P_01E01_l", "F_01E01", FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+    <div class="container">
+        <div class="table-responsive-sm">
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+            <table class="table table-bordered">
+                <thead align="left" class="thead-dark">
+                    <tr class="table-info">
+                        <th colspan="3"> 車輛資料建立-查詢</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            @Html.LabelFor(model => model.VE_DPNAME, null, new { @class = "control-label" })
+                            <i class="fa fa-search Find" data-to-value-id="VE_DPNO" data-to-text-id="VE_DPNAME" data-from="dept"></i>
+                        </td>
+                        <td>
+                            @Html.HiddenFor(model => model.VE_DPNO, new { id = "VE_DPNO" })
+                            @Html.EditorFor(model => model.VE_DPNAME, null, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(model => model.VE_DPNAME, "", new { @class = "text-danger" })
+
+                        </td>
+                        <td rowspan="6" style="vertical-align: middle">
+                            <input type="submit" value="確定" class="btn btn-success btn-block" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            @Html.LabelFor(model => model.VE_CARTYPE, null, new { @class = "control-label " })
+                        </td>
+                        <td>
+                            @Html.DropDownListFor(model => model.VE_CARTYPE, @car_type_list, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(model => model.VE_CARTYPE, "", new { @class = "text-danger" })
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            @Html.LabelFor(model => model.VE_KIND, null, new { @class = "control-label " })
+                        </td>
+                        <td>
+                            @Html.DropDownListFor(model => model.VE_KIND, @car_kind_list, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(model => model.VE_KIND, "", new { @class = "text-danger" })
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            @Html.LabelFor(model => model.VE_NO, null, new { @class = "control-label " })
+                        </td>
+                        <td>
+                            @Html.EditorFor(model => model.VE_NO, null, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(model => model.VE_NO, "", new { @class = "text-danger" })
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            @Html.LabelFor(model => model.VE_PARKNO, null, new { @class = "control-label " })
+                        </td>
+                        <td>
+                            @Html.EditorFor(model => model.VE_PARKNO, null, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(model => model.VE_PARKNO, "", new { @class = "text-danger" })
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            @Html.LabelFor(model => model.VE_NAME, null, new { @class = "control-label " })
+                        </td>
+                        <td>
+                            @Html.EditorFor(model => model.VE_NAME, null, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(model => model.VE_NAME, "", new { @class = "text-danger" })
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+}
+<script>
+    $(document).ready(function () {
+        $("#spl_add").click(function () {
+            location.href = "/SYS_01/F_01E01/P_01E01_a";
+        });
+    });
+</script>

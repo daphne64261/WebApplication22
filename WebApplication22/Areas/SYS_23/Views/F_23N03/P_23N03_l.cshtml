@@ -1,0 +1,236 @@
+﻿@model List<Data.Models.MisService>
+
+@*
+    改寫 Transart\MisService\mser03_l.asp
+    HTML設計補充: 因應內外層table長度無法對齊, 移除fieldset 區塊
+*@
+
+@{
+
+    //連結UrlPath
+    string my_URL = this.Request.Url.ToString();
+    string my_controllername = this.ViewContext.RouteData.Values["controller"].ToString();
+    int i = my_URL.IndexOf(my_controllername);
+    string base_URL = my_URL.Remove(i);
+
+    //接收controller 變數
+    string ms_noSearch = ViewBag.ms_noSeach;
+}
+
+@*編輯後儲存結果確認*@
+@if (TempData["message"] != null)
+{
+    <script type="text/javascript">
+        var message = @Html.Raw(Json.Encode(TempData["message"]));
+        alert(message);
+    </script>
+}
+else
+{
+    //pass
+}
+
+<center>
+    <form method="post" name="Clt_frm" id="Clt_frm" action="">
+        @*Kind 請用全大寫KIND, 雖然controller 變數為Kind*@
+        @if (Model == null)
+        {
+            <table border=1 cellspacing=0 class=clsFiledTitleCenter bordercolor=#D7DCDD style="BORDER-COLLAPSE: collapse; width:98%">
+                <tr>
+                    <td height=50 colspan=3>查無此資訊服務需求單號：@ms_noSearch</td>
+                </tr>
+            </table>
+            <input type=hidden id=KIND name=KIND value=""> @*未參照*@
+            <input type=hidden id=MS_ACEMNO name=MS_ACEMNO>
+            <input type=hidden id=MS_ACDATE name=MS_ACDATE>
+        }
+        else
+        {
+            <!--<table border=0 cellspacing=1 cellpadding=5 height=5 width="675px"> -->
+    <table border=0 cellspacing=1 cellpadding=5 height=5 style="width:100%">
+        @foreach (var item in Model)
+        {
+            @*
+                System.NullReferenceException: '並未將物件參考設定為物件的執行個體。'
+                Data.Models.MisService.MS_ACBACKMEMO.get 傳回 null。
+                *@
+        if (item.MS_ACBACKMEMO != null && item.MS_ACBACKMEMO.Trim() != "")
+        {
+                <tr>
+                    <td colspan=5>
+                        <table width=675 border=1 cellspacing=0 bordercolor=#D7DCDD style="BORDER-COLLAPSE:collapse;FONT-SIZE:12px;BACKGROUND-COLOR:#FFFF80;TEXT-ALIGN:center;width:100%">
+                            <tr>
+                                <td height=25 colspan=3 align=left>
+                                    @*<B>　退件說明：</B><br>　" & Replace( MST_ACBACKMEMO , CHR(10) , "<br>　" ) *@
+                                    <B>　退件說明：</B><br>　@item.MS_ACBACKMEMO
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+        }
+
+        if (item.MS_REASON != null && item.MS_REASON.Trim() != "")
+        {
+                <tr>
+                    <td colspan=5>
+                        <table width=675 border=1 cellspacing=0 bordercolor=#D7DCDD style="BORDER-COLLAPSE:collapse;FONT-SIZE:12px;BACKGROUND-COLOR:#FFFF80;TEXT-ALIGN:center;width:100%">
+                            <tr>
+                                <td height=25 colspan=3 align=left>
+                                    @*<B>　不核准原因：</B><br>　" & Replace( MS_REASON , CHR(10) , "<br>　" ) *@
+                                    <B>　不核准原因：</B><br>　@item.MS_REASON
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            }
+
+            <tr>
+                <td colspan=5>
+                    <table border=1 cellspacing=0 class=clsFiledTitleCenter bordercolor=#D7DCDD style="BORDER-COLLAPSE: collapse;width:100%; BACKGROUND-COLOR:lightskyblue">
+                        <tr>
+                            <td height=25 colspan=4 align=left>
+                                <B>　編號：</B>@item.MS_NO
+                                <input type=hidden id=MS_NO name=MS_NO value=@item.MS_NO>
+                                <input type=hidden id=KIND name=KIND value="">@*未被參照*@
+                            </td>
+                        </tr>
+                        <tr>
+                            <td height=25 width=130 align=left>
+                                <B>	　廠別：</B>台灣廠
+                            </td>
+                            <td height=25 width=175 align=left>
+                                <B>	　申請部門：</B>@item.MS_DPNAME
+                                <input type=hidden id=MS_DPNO name=MS_DPNO value=@item.MS_DPNO>
+                                <input type=hidden id=MS_DPNAME name=MS_DPNAME value=@item.MS_DPNAME>
+                            </td>
+                            <td height=25 width=175 align=left>
+                                <B>	　申請者：</B>
+                                <span id=say_name name=say_name>@item.MS_NAME</span>
+                                <input type=hidden id=MS_NAME name=MS_NAME value=@item.MS_NAME>
+                            </td>
+                            <td height=25 width=205 align=left>
+                                <B>	　申請日期：</B>@item.MS_DATE1.Value.ToString("yyyy/MM/dd")
+                            </td>
+                        </tr>
+                        <tr>
+                            <td height=25 colspan=3 align=left>
+                                <B>	　附件：</B>@item.MS_ATTACH 張
+                            </td>
+                            <td height=25 align=left>
+                                <B>	　希望完成日期：</B>@item.MS_DATE2.Value.ToString("yyyy/MM/dd")
+                            </td>
+                        </tr>
+                        <tr>
+                            <td height=25 colspan=4 align=left>
+                                <B>	　資訊服務主題項目：</B> @item.MS_SUBJECT
+                            </td>
+                        </tr>
+                        <tr>
+                            <td align=left colspan=4>
+                                <B>	　修改依據說明：</B>
+                                <br>　 @item.MS_CONTENT2
+                            </td>
+                        </tr>
+                        <tr>
+                            <td align=left colspan=4>
+                                <B>	　資訊服務內容：</B>
+                                <br>　 @item.MS_CONTENT1
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+
+            <tr>
+                <td colspan=5>
+                    <!--<fieldset style=HEIGHT: 40px; PADDING-BOTTOM: 5px; PADDING-LEFT: 5px; PADDING-RIGHT: 5px; PADDING-TOP: 5px; WIDTH: 600px>-->
+                    <table width=675 border=1 cellspacing=0 bordercolor=#D7DCDD style='BORDER-COLLAPSE:collapse;FONT-SIZE:12px;BACKGROUND-COLOR:#C0C0C0;TEXT-ALIGN:center;width:100%'>
+                        <tr>
+                            <td height=25 width=300 align=left>
+                                <B>　實際處理工時：</B>@item.MS_RCHOUR
+                            </td>
+                            <td height=25 align=left>
+                                <B>　完工日期：</B>
+                                @if (item.MS_RCDATE != null)
+                                {
+                                    @item.MS_RCDATE.Value.ToString("yyyy/MM/dd");
+                                }
+                                else
+                                {
+                                }
+                                </td>
+                        </tr>
+                        <tr>
+                            <td height=25 colspan=2 align=left>
+                                @if (item.MS_MEMO1 == null)
+                                {
+                                     <B>　延誤說明：</B><br>
+                                }
+                                else
+                                {
+                                    @*<B>延誤說明：</B><br> " & Replace( MS_MEMO1 , CHR(10) , "<br> " )*@
+                                     <B>　延誤說明：</B><br> @item.MS_MEMO1
+                                }
+                            </td>
+                        </tr>
+                        <tr>
+                            <td height=25 colspan=2 align=left>
+                                @if (item.MS_MEMO2 == null)
+                                {
+                                      <B>　完工說明：</B><br>
+                                }
+                                else
+                                {
+                                    @*<B>完工說明：</B><br> " & Replace( MS_MEMO2 , CHR(10) , "<br> " )*@
+                                    <B>　完工說明：</B><br>　@item.MS_MEMO2
+                                }
+                            </td>
+                        </tr>
+                    </table>
+                    <!--</fieldset>-->
+                </td>
+            </tr>
+            <tr>
+                <td colspan=5>
+                    <!--<fieldset style=HEIGHT: 40px; PADDING-BOTTOM: 5px; PADDING-LEFT: 5px; PADDING-RIGHT: 5px; PADDING-TOP: 5px; WIDTH: 600px>-->
+                    <table width=675 border=1 cellspacing=0 bordercolor=#D7DCDD style='BORDER-COLLAPSE:collapse;FONT-SIZE:12px;BACKGROUND-COLOR:#C0C0C0;TEXT-ALIGN:center;width:100%'>
+                        <tr>
+                            <td height=25 width=160 align=left>
+                                <B>　接單確認者：</B>@item.MS_ACNAME
+                            </td>
+                            <td height=25 width=160 align=left>
+                                <B>　預定處理工時：</B>@item.MS_PCHOUR
+                            </td>
+                            <td height=25 width=180 align=left>
+                                <B>　預定完成日期：</B>
+                                @if (item.MS_PCDATE != null)
+                                {
+                                    @item.MS_PCDATE.Value.ToString("yyyy/MM/dd");
+                                }
+                                else
+                                {
+                                }
+                            </td>
+                            <td height=25 width=250 align=left>
+                                <B>　接單日期：</B>
+                                @if (item.MS_ACDATE != null)
+                                {
+                                    @item.MS_ACDATE.Value.ToString("yyyy/MM/dd");
+                                }
+                                else
+                                {
+                                }
+                            </td>
+                        </tr>
+                    </table>
+                    @*</fieldset>*@
+                </td>
+            </tr>
+        }@*foreach*@
+    </table>
+        }@*end of Model == null)*@
+    </form>
+</center>
+

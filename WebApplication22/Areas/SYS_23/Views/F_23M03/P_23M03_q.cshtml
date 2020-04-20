@@ -1,0 +1,128 @@
+﻿@model PagedList.IPagedList<Data.Models.computer>
+@using PagedList.Mvc;
+@{
+    SelectList s_com_kind = ViewBag.select_com_kind;
+    int m_com_kind = ViewBag.com_kind;
+    string m_com_ddate1 = ViewBag.com_ddate1;
+    string m_com_ddate2 = ViewBag.com_ddate2;
+    int m_page_number = ViewBag.page_number;
+    int m_page_size = ViewBag.page_size;
+    int total_money = ViewBag.total_money;
+}
+@using (Html.BeginForm("P_23M03_q", "F_23M03", FormMethod.Post))
+{
+    <table class="table table-bordered table-hover table-condensed text-left">
+        <thead>
+            <tr class="bg-primary">
+                <th colspan="10">
+                    報廢設備資料建立--查詢
+                </th>
+            </tr>
+            <tr class="bg-primary">
+                <td colspan="2" style="width:20%">
+                    類別：
+                    @Html.DropDownList("com_kind", s_com_kind, new { @style = "width:55%" })
+                </td>
+                <td colspan="4" style="width:40%">
+                    報廢日期：
+                    從 @Html.TextBox("com_ddate1", m_com_ddate1, new { @class = "datepicker", @style = "width:25%" })
+                    ～
+                    到 @Html.TextBox("com_ddate2", m_com_ddate2, new { @class = "datepicker", @style = "width:25%" })
+                </td>
+                <td colspan="4" style="width:40%">
+                    <button type="submit" class="btn btn-primary" style="width:100%">
+                        確定
+                    </button>
+                </td>
+            </tr>
+            <tr class="bg-info text-center">
+                <td>報廢日期</td>
+                <td>設備編號</td>
+                <td>設備名稱</td>
+                <td>購買日期</td>
+                <td>歸屬部門</td>
+                <td>用途</td>
+                <td>購買金額</td>
+                <td>報廢原因</td>
+            </tr>
+        </thead>
+        <tbody class="bg-light text-center">
+            @if (Model.Count > 0)
+            {
+                foreach (var item in Model)
+                {
+                    <tr onclick="window.location.href='@Url.Action("P_23M01_e", "F_23M01", new { com_dsn = item.com_dsn })'">
+                        <td> @Html.DisplayFor(x => item.com_ddate)</td>
+                        <td> @Html.DisplayFor(x => item.com_no)</td>
+                        <td> @Html.DisplayFor(x => item.com_name)</td>
+                        <td> @Html.DisplayFor(x => item.com_bdate)</td>
+                        <td> @Html.DisplayFor(x => item.com_dpname)</td>
+                        <td> @Html.DisplayFor(x => item.com_use)</td>
+                        <td class="text-right">
+                            @Html.DisplayFor(x => item.com_money) &nbsp;
+                            @Html.DisplayFor(x => item.mon_kind)
+                        </td>
+                        <td> @Html.DisplayFor(x => item.com_dreason)</td>
+                    </tr>
+                }
+                if (Model.IsLastPage)
+                {
+                    <tr>
+                        <td colspan="7" class="text-right">
+                            總計: &nbsp; &nbsp; @total_money &nbsp; NT
+                        </td>
+                        <td></td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+}
+@if (Model.Count > 0)
+{
+    <div class="d-flex justify-content-center">
+        @Html.PagedListPager(
+                     Model,
+                     page => Url.Action("P_23M03_q", "F_23M03", new
+                     {
+                         com_kind = m_com_kind,
+                         com_ddate1 = m_com_ddate1,
+                         com_ddate2 = m_com_ddate2,
+                         page_number = page,
+                         page_size = m_page_size
+                     }
+                                     ),
+                     new PagedListRenderOptions
+                     {
+                         LinkToFirstPageFormat = "<< 第一頁",
+                         LinkToPreviousPageFormat = "< 上一頁",
+                         LinkToNextPageFormat = "下一頁 >",
+                         LinkToLastPageFormat = "最後一頁 >>",
+                         DisplayLinkToFirstPage = PagedListDisplayMode.Always,
+                         DisplayLinkToPreviousPage = PagedListDisplayMode.Always,
+                         DisplayLinkToNextPage = PagedListDisplayMode.Always,
+                         DisplayLinkToLastPage = PagedListDisplayMode.Always,
+                         DisplayLinkToIndividualPages = false
+                         //PageCountAndCurrentLocationFormat = "第 {0} 頁 / 共 {1} 頁",
+                         //DisplayPageCountAndCurrentLocation = true,
+                         //ItemSliceAndTotalFormat = "第 {0} 到 {1} 項 / 共 {2} 項",
+                         //DisplayItemSliceAndTotal = true
+                     })
+    </div>
+}
+<script>
+    $("#spl_qry").click(function () {
+        location.href = "/SYS_23/F_23M03/P_23M03_q";
+    });
+    $("#spl_f1").click(function () {
+        var t = "@Html.Raw(Url.Action("P_23M03_r", "F_23M03",
+                                        new
+                                        {
+                                            com_kind = m_com_kind,
+                                            com_ddate1 = m_com_ddate1,
+                                            com_ddate2 = m_com_ddate2
+                                        }))";
+        location.href = t;
+    });
+    $("#spl_f1").text("轉EXCEL");
+</script>

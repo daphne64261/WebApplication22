@@ -1,0 +1,101 @@
+﻿@{
+    //改寫程式碼如下 Transart\MisService\mser04_q.asp
+}
+@model List<WebApplication22.Areas.SYS_23.Models.MisServiceStatistics>
+@{
+    //連結UrlPath
+    string my_URL = this.Request.Url.ToString();
+    string my_controllername = this.ViewContext.RouteData.Values["controller"].ToString();
+    int i = my_URL.IndexOf(my_controllername);
+    string base_URL = my_URL.Remove(i);
+
+    //接收controller 傳遞變數
+    string the_year = ViewBag.the_year; //網頁傳遞的年度
+    int yearNum1 = 0; //上年度
+    int yearNum2 = 0; //下年度
+    string ymWord = "";//統計年月yyyy/MM 中間的/ 會導致傳遞給js 只留下yyyy, 故另外處理資料
+
+    if (the_year == null)
+    {
+        yearNum1 = DateTime.Today.Year - 1;
+        yearNum2 = DateTime.Today.Year + 1;
+        the_year = DateTime.Today.Year.ToString();
+    }
+    else
+    {
+        yearNum1 = int.Parse(the_year) - 1;
+        yearNum2 = int.Parse(the_year) + 1;
+    }
+}
+
+@if (TempData["message"] != null)
+{
+    <script type="text/javascript">
+        var message = @Html.Raw(Json.Encode(TempData["message"]));
+        alert(message);
+    </script>
+}
+else
+{
+    //pass
+}
+
+<center>
+    <table width='300' border=1 cellspacing=0 cellpadding=0 id='ColBody' bordercolor='#D7DCDD' style='BORDER-COLLAPSE: collapse;width:25%'>
+        <tr align=center>
+            <td height=25 class='heading2' width=300 colspan=3 valign=top>
+                @*
+                    <a style='text-decoration:none;' href='mser04_q.asp?The_Year=" & Cint( The_Year ) - 1 & "'><img alt='" & Cint( The_Year ) - 1 & "' src='../images/backover.jpg' onmousedown="" this.src='../images/backdown.jpg' "" border=0 height=18></a>
+                    "&nbsp;&nbsp;" & The_Year & "年&nbsp;每月結單統計表查印&nbsp;&nbsp;
+                    <a style='text-decoration:none;'  href='mser04_q.asp?The_Year=" & Cint(The_Year) + 1 & "'><img alt='" & Cint(The_Year) + 1 & "' src='../images/nextover.jpg' onmousedown=""this.src='../images/nextdown.jpg'"" border=0 height=18 ></a>
+
+                *@
+                @*如要保持空白字元, &nbsp; 與後面元素不可斷開*@
+                <i class="fas fa-arrow-left" style="color: white;background: #2ef22e;font-size: 25px;margin-top: 3px;" onclick='changeYear(@yearNum1.ToString());'></i>
+                &nbsp;&nbsp; @the_year&nbsp;年&nbsp;每月結單統計表查印
+                &nbsp;&nbsp; <i class="fas fa-arrow-right" style="color: white;background: #2ef22e;font-size: 25px;margin-top: 3px;" onclick='changeYear(@yearNum2.ToString());'></i>
+            </td>
+        </tr>
+        <tr align=center height=30>
+            <td class='clsFiledTitleCenter' width='100'>
+                統計年月
+            <td class='clsFiledTitleCenter' width='170'>
+                資訊服務需求單結單數
+            <td class='clsFiledTitleCenter' width='30'>
+        </tr>
+
+        @foreach (var item in Model)
+        {
+            <tr height=25>
+                <td class='clsListNormalCenter'>@item.ym</td>
+                <td class='clsListNormalCenter'>@item.MisSer_Count</td>
+                <td class='clsListNormalCenter'>
+                    @*<img alt='每月結單統計表列印' align=middle src='../images/pics_doc.gif' border=0 style='cursor:hand' onclick="" doPrint('" & ym & "');" ">*@
+                    @*font-awesome 5*@
+                    @{
+                        //@item.ym 格式為2020/10, 傳遞給js 會只剩2020, 故重組參數
+                        //使用反斜線組出特殊字元 >> 導致function 無法運作
+                        //ymWord = @item.ym.Split('/')[0] + "\\/" + @item.ym.Split('/')[1];
+                        ymWord = @item.ym.Split('/')[0] + @item.ym.Split('/')[1];
+                    }
+                    <i class="far fa-file-alt" style="color:blue;font-size: 20px;margin-top: 3px;" onclick='doPrint(@ymWord);'></i>
+
+                </td>
+            </tr>
+        }
+    </table>
+</center>
+
+<script>
+    function changeYear(year) {
+        //alert("changeYear");
+        var year = year;
+        window.location.href = "@base_URL" + "@my_controllername" + "/P_23N04_q?The_Year=" + year;
+    }
+
+    function doPrint (ym) {
+        //alert(ym);
+        var ym = ym;
+        window.location.href = "@base_URL" + "@my_controllername" + "/P_23N04_r?ym=" + ym;
+    }
+</script>

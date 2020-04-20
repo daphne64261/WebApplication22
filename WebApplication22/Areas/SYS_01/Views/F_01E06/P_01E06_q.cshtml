@@ -1,0 +1,197 @@
+﻿@model PagedList.IPagedList<Data.Models.Vehicle_M>
+@using PagedList.Mvc;
+@{
+    ViewBag.Title = "公務車加油及維護查詢";
+    decimal? m_vm_item = ViewBag.vm_item;
+    string m_CarNo = ViewBag.CarNo;
+    string m_Date1 = ViewBag.Date1;
+    string m_Date2 = ViewBag.Date2;
+    int m_Flag = ViewBag.Flag;
+    int m_PageSize = ViewBag.PageSize;
+    int m_PageNo = ViewBag.PageNo;
+    string[] ArrItem = new string[] { "", "加油", "保養維護" };
+}
+<link href="~/Content/mainstyle.css" rel="stylesheet" />
+<form method="post" action="cmre06_q" name="frmCrtl" id="frmCrtl" onsubmit="return false;">
+    <table width="760" border="0" cellspacing="0" cellpadding="0" align="center">
+        <tr>
+            <td colspan=4 height=25 bgcolor="#0000FF" class='heading' width="760"><b><font color="#FFFFFF">公務車加油及維護查詢</font></b></td>
+        </tr>
+        <tr>
+            <td height=25 class="clsTableTitleLeft" width="150">
+                車號：
+                @Html.Action("GetCarNoMenu", new { ve_no = "@(m_CarNo)" })
+            </td>
+            <td height=25 class="clsTableTitleLeft" width="150">
+                項目：
+                <select name="vm_item" id="vm_item">
+                    <option value="">- - -</option>
+                    <option value="1">加　　油</option>
+                    <option value="2">保養維護</option>
+                </select>
+
+            </td>
+            <td height=25 class="clsTableTitleCenter" width="360">
+                使用日期
+                ：起
+                <input type="text" id="Date1" name="Date1" size="10" maxlength="10" class="clsListNormalLeft datepicker" onchange="chkDate(this)" value="@m_Date1">
+                ～訖
+                <input type="text" id="Date2" name="Date2" size="10" maxlength="10" class="clsListNormalLeft datepicker" onchange="chkDate(this)" value="@m_Date2">
+            </td>
+            <td height=25 class="clsTableTitleCenter" width="100">
+                <input type='button' name='idQuery' value='查詢' onclick='DoQry()' class="clsButton">
+            </td>
+    </table>
+    <table width="760" border="0" cellspacing="0" cellpadding="0" align='center'>
+        <tr>
+            <td>
+                <table width="760" border="1" cellspacing="0" cellpadding=0 style='BORDER-COLLAPSE:collapse;' id='DataBody' style="behavior: url(../library/tablehl.htc)" hlColor='#FFFF80' slColor='#FFFF80'>
+                    <THEAD>
+                        <tr align='center'>
+                            <td height='20' class='clsFiledTitleCenter' width='60'>車號
+                            <td height='20' class='clsFiledTitleCenter' width='70'>維護日期
+                            <td height='20' class='clsFiledTitleCenter' width='60'>維護者
+                            <td height='20' class='clsFiledTitleCenter' width='60'>項目
+                            <td height='20' class='clsFiledTitleCenter' width='60'>上次里程
+                            <td height='20' class='clsFiledTitleCenter' width='60'>本次里程
+                            <td height='20' class='clsFiledTitleCenter' width='60'>行駛里程
+                            <td height='20' class='clsFiledTitleCenter' width='50'>加油(L)
+                            <td height='20' class='clsFiledTitleCenter' width='50'>油耗(KM/L)
+                            <td height='20' class='clsFiledTitleCenter' width='60'>金額
+                            <td height='20' class='clsFiledTitleCenter' width='80'>發票號碼
+                            <td height='20' class='clsFiledTitleCenter' width='90'>備註
+                    </THEAD>
+                    <tbody>
+                        @if (Model.Count > 0)
+                        {
+                            foreach (var item in Model)
+                            {
+                        @:<tr height=25>
+                            @:	<td class='clsListNormalCenter'> @(item.vm_carno) </td>
+                            @:	<td class='clsListNormalCenter'> @(item.vm_date?.ToString("yyyy/MM/dd")) </td>
+                            @:	<td class='clsListNormalCenter'> @(item.vm_name) </td>
+                            @:	<td class='clsListNormalCenter'> @(ArrItem[Decimal.ToInt32(item.vm_item ?? 0)]) </td>
+                            @:	<td class='clsListNormalCenter'> @(item.vm_trip1 ?? 0) </td>
+                            @:	<td class='clsListNormalCenter'> @(item.vm_trip2 ?? 0) </td>
+                            @:	<td class='clsListNormalCenter'> @(item.vm_trip ?? 0) </td>
+                                    if (item.vm_item == 1)
+                                    {
+                            @: <td class='clsListNormalCenter'> @(item.vm_oiladd ?? 0) </td>
+                            @: <td class='clsListNormalCenter'> @(item.vm_ocost ?? 0) </td>
+                                    }
+                                    else
+                                    {
+                            @: <td class='clsListNormalCenter'> - - - </td>
+                            @: <td class='clsListNormalCenter'> - - - </td>
+                                    }
+                            @: <td class='clsListNormalCenter'> @(item.vm_mcost ?? 0)  </td>
+                            @: <td class='clsListNormalCenter'> @(item.vm_oiladd ?? 0) </td>
+                            @: <td class='clsListNormalCenter'> @(item.vm_oiladd ?? 0) </td>
+                        @: </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </td>
+        </tr>
+    </table>
+</form>
+@if (Model.Count > 0)
+{
+<div class="d-flex justify-content-center">
+    @Html.PagedListPager(
+      Model,
+      page => Url.Action("P_01E06_q", "F_01E06", new { vm_item = m_vm_item,
+                                                      CarNo = m_CarNo,
+                                                      Date1 = m_Date1,
+                                                      Date2 = m_Date2 ,
+                                                      Flag  = m_Flag,
+                                                      PageSize = m_PageSize,
+                                                      PageNo = page }
+                        ),
+      new PagedListRenderOptions
+      {
+          LinkToFirstPageFormat = "<< 第一頁",
+          LinkToPreviousPageFormat = "< 上一頁",
+          LinkToNextPageFormat = "下一頁 >",
+          LinkToLastPageFormat = "最後一頁 >>",
+          DisplayLinkToFirstPage = PagedListDisplayMode.Always,
+          DisplayLinkToPreviousPage = PagedListDisplayMode.Always,
+          DisplayLinkToNextPage = PagedListDisplayMode.Always,
+          DisplayLinkToLastPage = PagedListDisplayMode.Always,
+          DisplayLinkToIndividualPages = false
+                 //PageCountAndCurrentLocationFormat = "第 {0} 頁 / 共 {1} 頁",
+          //DisplayPageCountAndCurrentLocation = true,
+          //ItemSliceAndTotalFormat = "第 {0} 到 {1} 項 / 共 {2} 項",
+          //DisplayItemSliceAndTotal = true
+      })
+</div>
+}
+
+
+<script>
+    $(document).ready(function () {
+        $("#spl_qry").click(function () {
+            DoQry();
+        });
+        $("#spl_f1").click(function () {
+            doPrint();
+        });
+        $("#spl_f1").text("列印");
+        $("#vm_item").val(@m_vm_item).change();
+    });
+    function DoQry() {
+        var CarNo = $("#selCarNo").val();
+        var vm_item = $("#vm_item").val();
+        var Date1 = $("#Date1").val();
+        var Date2 = $("#Date2").val();
+        URL = "/SYS_01/F_01E06/P_01E06_q?vm_item=" + vm_item + "&CarNo=" + CarNo + "&Date1=" + Date1 + "&Date2=" + Date2 + "&Flag=1";
+        location.href = URL;
+    }
+    function doPrint() {
+
+        var CarNo = $("#selCarNo").val();
+        var vm_item = $("#vm_item").val();
+        var Date1 = $("#Date1").val();
+        var Date2 = $("#Date2").val();
+
+        rptURL = "/SYS_01/F_01E06/P_01E06_r?vm_item=" + vm_item + "&CarNo=" + CarNo + "&Date1=" + Date1 + "&Date2=" + Date2;
+        sFeature = "status=no,left=500,top=150,width=720,height=550,resizable=yes,toolbar=no,titlebar=yes,menubar=no";
+        alert(rptURL);
+        //retVal = window.open(rptURL, "_blank", sFeature);
+    }
+    function chkDate(objSrc) {
+        //若為空白則帶出今日日期
+        if (objSrc.value != "") {
+            var datePattern = /^(\d{4})(\/)(0?[1-9]|1[012])(\/)(0?[1-9]|[12][0-9]|3[01])$/;
+            var ok = objSrc.value.match(datePattern);
+            if (!ok) {
+                alert("日期格式錯誤！");
+
+                var today = new Date();
+                objSrc.value = $.datepicker.formatDate('yy/mm/dd', today);
+                return;
+            } else {
+                var yyyy = objSrc.value.substr(0, 4);
+                var MM = objSrc.value.substr(5, 2);
+                var dd = objSrc.value.substr(8, 2);
+                var t = new Date(yyyy, MM - 1, dd)
+                var t2 = $.datepicker.formatDate('yy/mm/dd', t);
+                var t_yyyy = t2.substr(0, 4);
+                var t_MM = t2.substr(5, 2);
+                var t_dd = t2.substr(8, 2);
+                if ((yyyy != t_yyyy) || (MM != t_MM) || (dd != t_dd)) {
+                    alert("日期錯誤！");
+                    return;
+                }
+                else {
+                    objSrc.value = t2;
+                }
+            }
+        } else {
+            var today = new Date();
+            objSrc.value = $.datepicker.formatDate('yy/mm/dd', today);
+        }
+    }
+</script>
+

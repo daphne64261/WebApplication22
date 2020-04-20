@@ -1,0 +1,451 @@
+﻿@*
+    改寫 Transart\MisService\mser01_a.asp
+    維持HTML設計
+*@
+
+@model Data.Models.MisService
+@{
+    ViewBag.Title = "資訊服務申請單--新增";
+
+    //連結UrlPath
+    string my_URL = this.Request.Url.ToString();
+    string my_controllername = this.ViewContext.RouteData.Values["controller"].ToString();
+    int i = my_URL.IndexOf(my_controllername);
+    string base_URL = my_URL.Remove(i);
+
+    //登入者資訊做預設欄位填值
+    string dpno = ViewBag.dpno;
+    string dpname = ViewBag.dpname;
+    string emno = ViewBag.emno;
+    string ename = ViewBag.ename;
+    string subject = "";
+
+    //處理新增初始化與驗證失敗再回到網頁編輯的資料來源
+    if (Model != null)
+    {
+        if (dpno == null)
+        {
+            dpno = Model.MS_DPNO;
+        }
+
+        if (dpname == null)
+        {
+            dpname = Model.MS_DPNAME;
+        }
+
+        if (emno == null)
+        {
+            emno = Model.MS_EMNO;
+        }
+
+        if (ename == null)
+        {
+            ename = Model.MS_NAME;
+        }
+
+        subject = Model.MS_SUBJECT;
+    }
+
+    //需求者部門
+    IEnumerable<SelectListItem> dept_List = ViewBag.Select_Dept;
+}
+
+@*網頁處理結果之訊息顯示*@
+@if (TempData["message"] != null)
+{
+    <script type="text/javascript">
+        var message = @Html.Raw(Json.Encode(TempData["message"]));
+        alert(message);
+    </script>
+}
+else
+{
+    //pass
+}
+
+<center>
+    <!--<form method="post" name="Clt_frm" id="Clt_frm" action="">-->
+    @using (Html.BeginForm("P_23N01_a", "F_23N01", FormMethod.Post, new { id = "AddForm", name = "AddForm" }))
+    {
+    <table border="0" cellspacing="1" cellpadding="5" height="5" style="width:50%">
+        <tr>
+            <td colspan=5 class='heading2'>資訊服務需求單--新增</td>
+        </tr>
+        <tr>
+            <td colspan=5>
+                <!--<fieldset style="HEIGHT: 40px; PADDING-BOTTOM: 5px; PADDING-LEFT: 5px; PADDING-RIGHT: 5px; PADDING-TOP: 5px; WIDTH: 600px">-->
+                <table width="675" border="1" cellspacing="0" class="clsFiledTitleCenter" bordercolor="#D7DCDD" style="BORDER-COLLAPSE: collapse; width:100%">
+                    <tr>
+                        <td height=25 align=left>
+                            &nbsp;  申請部門：
+                            <!--
+                                <% =GetSelDep( "" ) %>
+                                "<Select id=selDep name=selDep onchange='ChangeDept()' >"
+                                <input type="hidden" id="MS_DPNO" name="MS_DPNO">
+                                <input type="hidden" id="MS_DPNAME" name="MS_DPNAME">
+                                -->
+                            @*@Html.DropDownListFor(model => model.Computer.com_kind, s_com_kind)*@
+
+                            @Html.DropDownList("selDep", dept_List, new { id = "selDep", @onchange = "ChangeDept()" })
+
+                            <input type="hidden" id="MS_DPNO" name="MS_DPNO" value=@dpno>
+                            <input type="hidden" id="MS_DPNAME" name="MS_DPNAME" value=@dpname>
+
+                        </td>
+                        <td height=25 align=left>
+                            &nbsp;  申請者：
+                            @*
+                                    @Html.TextBoxFor(model => model.MS_EMNO, new { id = "MS_EMNO", size = 3, maxlength = 3, @Value = emno })
+                                <i class="fa fa-search Find_Emp_of_Dept" data-to-value-id="MS_EMNO" data-to-text-id="MS_NAME" data-dpno-id="MS_DPNO"></i>
+                                <span id=say_name name=say_name>@ename</span>
+                                <input type=hidden id=MS_NAME name=MS_NAME value=@ename>
+
+
+                            *@
+                            <input type="text" id="MS_EMNO" name="MS_EMNO" size="3" maxlength="3" onchange="fn_Clt_emno_Change_Server('MS_EMNO','say_name','MS_NAME')" value=@emno>
+                         
+                            @*
+                                //測試以下js效果點選跳頁過程畫面會跑掉, 視窗變網頁
+                                <i class="fa fa-search Find_Emp_of_Dept" data-to-value-id="MS_EMNO" data-to-text-id="MS_NAME" data-dpno-id="MS_DPNO"></i>
+                            *@
+                            <i class="fa fa-search" onclick="ShowList();"></i>
+                            <span id=say_name name=say_name>@ename</span>
+                            <input type="hidden" id="MS_NAME" name="MS_NAME" value=@ename>
+
+                            <!--
+                            <img style="CURSOR: hand" onclick="ShowList1('MS_EMNO','','login','ln_emno,ln_cname',1,15,'ln_emno','ln_cname',2)" src="../images/icon_lookup.gif">
+                            <span id="say_name" name="say_name"></span>                               
+                            <input type="hidden" id="MS_NAME" name="MS_NAME">
+                                 -->
+
+                        </td>
+                        <td height=25 align=left>
+                            &nbsp;  附件：
+                            <input type="text" id="MS_ATTACH" name="MS_ATTACH" size="4" maxlength="5" value="0" onchange="chkNum(this)">
+                            張
+                        </td>
+                        <td height=25 align=left>
+                            &nbsp;  申請日期：
+                            <!--
+                            <input id="MS_DATE1" name="MS_DATE1" style="WIDTH: 80px; HEIGHT: 22px" size="10" maxLength="10" onchange=chkDate("MS_DATE1")>
+                            <IMG style="CURSOR:hand" onclick="showCalendar('MS_DATE1');" height=13 src="../images/date_picker.gif" width=13>
+                                -->
+                            @Html.EditorFor(model => model.MS_DATE1, new { htmlAttributes = new { @class = "MS_DATE1", @style = "width:54%", @autocomplete = "off" } })
+                        </td>
+                    </tr>
+                    <tr>
+                        <td height=25 colspan=3 align=left>
+                            <!--附件：
+                            <input type="text" id="MS_ATTACH" name="MS_ATTACH" size="4" maxlength="5" value="0" onchange="chkNum(this)" >
+                            張-->
+                        </td>
+                        <td height=25 align=left>
+                            &nbsp;  希望完成日期：
+                            <!--
+                            <input id="MS_DATE2" name="MS_DATE2" style="WIDTH: 80px; HEIGHT: 22px" size="10" maxLength="10" onchange=chkDate("MS_DATE2")>
+                            <IMG style="CURSOR:hand" onclick="showCalendar('MS_DATE2');" height=13 src="../images/date_picker.gif" width=13>
+                                -->
+                            @Html.EditorFor(model => model.MS_DATE2, new { htmlAttributes = new { @class = "datepicker", @style = "width:45%", @autocomplete ="off" } })
+                        </td>
+                    </tr>
+                    <tr>
+                        <td height=25 colspan=4 align=left>
+                            &nbsp;  資訊服務主題項目：
+                            <input type="text" id="MS_SUBJECT" name="MS_SUBJECT" size="75" maxlength="30" style="max-width:100%" value=@subject>
+                            @*以下程式當model 沒資料時會出錯
+                                <!--<input type=text id=MS_SUBJECT name=MS_SUBJECT size=75 maxlength=30 value=@Model.MS_SUBJECT style="max-width:100%">-->
+                                *@
+                            
+                        </td>
+                    </tr>
+                    <tr>
+                        <td align="left" colspan=4>
+                            &nbsp;  修改依據說明：<font color=red>（請詳述修改依據，如：何種會議決議、何人提出...等）</font><br>
+                            <!--<TextArea id="MS_CONTENT2" name="MS_CONTENT2" Rows="3" cols="90"></TextArea>-->
+                            &nbsp;  @Html.TextAreaFor(model => model.MS_CONTENT2, 3, 110, new { @style = "max-width:84%" })
+                        </td>
+                    </tr>
+                    <tr>
+                        <td align="left" colspan=4>
+                            &nbsp;  資訊服務內容：<br>
+                            <!--<TextArea id="MS_CONTENT1" name="MS_CONTENT1" Rows="15" cols="90"></TextArea>-->
+                            &nbsp;  @Html.TextAreaFor(model => model.MS_CONTENT1, new { Rows = 15, cols = 110, @style = "max-width:84%" })
+                        </td>
+                    </tr>
+                </table>
+                <!--</fieldset>-->
+            </td>
+        </tr>
+    </table>
+    <!--</form>-->
+    }
+</center>
+
+<script>
+    $(document).ready(function () {
+        //設定TopButton按鈕動作
+        $("#spl_qry").click(function () {
+            //DoQry();
+            if (confirm("確定不存檔資料？")) {
+                window.location.href = "@base_URL" + "@my_controllername" + "/P_23N01_l";
+            }
+        });
+
+        $("#spl_save").click(function () {
+            Save();
+        });
+
+        //申請者部門欄位異動
+        $("#selDep").change(function () {
+            //pass
+        });
+
+        //手動填值嘗試呼叫action取回相關員工資訊
+        $("#MS_EMNO").change(function () {
+            //pass
+            //alert("MS_EMNO.change");
+        });
+
+        //申請者欄位異動(因應程式使用val設值後, 無法觸發onchange的情境, 避免val(XX).change() 作法導致change以後的程式無法執行,
+        //故調整順序)
+        //$("#MS_EMNO").change(function () {
+        $("#MS_NAME").change(function () {
+            //alert("eeee>>>" + $("#MS_EMNO").val() + $("#MS_NAME").val());
+            //因點選放大鏡會同步呼叫my_update設定相關值, 故不需呼叫以下程式
+            //fn_Clt_emno_Change_Server('MS_EMNO', 'say_name', 'MS_NAME');
+        });
+
+        //為顯示預設日期資訊避免空白加入自訂datePickerclass
+        $(".MS_DATE1").datepicker(
+            {
+                    autoSize: true,
+                    changeMonth: true,
+                    changeYear: true,
+                    showButtonPanel: true
+                }
+            ).datepicker("option", $.datepicker.regional['zh-TW'])
+                .datepicker("option", "dateFormat", "yy/mm/dd")
+            .datepicker("setDate", new Date());
+        ////欄位不需預設顯示日期資訊, 不需自訂datepicker
+        //$(".MS_DATE2").datepicker
+
+    });
+
+    function ChangeDept() {
+        //當申請部門selDep 欄位值異動時被觸發
+        //因應交叉操作程式設定select 與手動切換選單導致多個select 問題
+        //執行以下程式將上一個程式設定的部門代碼取消select; 如果沒找到就不做
+        var msdpNo = $("#MS_DPNO").val();
+        $('#selDep option[value=' + msdpNo + ']').attr('selected', false);
+
+        var m_dpno = $("#selDep").val();
+        //var m_emname = $("#selDep").text();//此法會顯示所有清單中text列表
+        var m_dpname = $("#selDep option:selected").text()
+
+        //way1
+        $("#MS_DPNO").val(m_dpno);
+        $("#MS_DPNAME").val(m_dpname);
+        //alert("+++>>>>>"  + $("#MS_DPNO").val() + " || " + $("#MS_DPNAME").val());
+
+        //way2為測試
+        //document.getElementById("mytext").value = "My value";
+    }
+
+    function chkNum(attach) {
+        var attachNum = attach.value.trim();
+        if (attachNum != "") {
+            if (isNaN(attachNum)) {
+                //非有效數字才會回傳true
+                $("#MS_ATTACH").val("0");//將值改回0在alert
+                alert("張數請輸入整數數字！");
+            }
+        }
+    }
+
+    function Save() {
+        //點選儲存按鈕時觸發
+        var alertMsg = "";
+
+        // check 該填未填
+        if ($("#MS_DPNAME").val() == null | $("#MS_DPNAME").val().trim() == "") {
+            alertMsg = "請輸入申請部門\n";
+        }
+
+        //異動工號連動資訊, 尚未完成
+        if ($("#MS_EMNO").val() == null | $("#MS_EMNO").val().trim() == "") {
+            alertMsg = alertMsg + "請輸入申請者！\n";
+        }
+
+        if ($("#MS_ATTACH").val() == null | $("#MS_ATTACH").val().trim() == "") {
+            alertMsg = alertMsg + "張數未輸入！\n";
+        } else if (isNaN($("#MS_ATTACH").val().trim())) {
+            //// isNaN returns true if the variable does NOT contain a valid number
+            //非有效數字才會回傳true
+            alertMsg = alertMsg + "張數請輸入整數數字！\n";
+        } else {
+
+        }
+
+        //先取得目前時間比較填寫日期是否為過去日期
+        var dt = new Date();
+        var dtStr = dt.getFullYear() + "/" + (dt.getMonth() + 1) + "/" + dt.getDate();//month 0表一月, 故須加1
+        var nowStr = CDate4YYYYMMDD(dtStr);
+        //alert(nowStr);
+
+        if ($("#MS_DATE1").val() == null | $("#MS_DATE1").val().trim() == "") {
+            alertMsg = alertMsg + "請輸入申請日期！\n";
+        } else {
+            //date validation on controller
+            if (!isDate($("#MS_DATE1").val())) {
+                alertMsg = alertMsg + "請輸入合理的申請日期！\n";
+            } else {
+
+                if ($("#MS_DATE1").val().trim() < nowStr) {
+                    alertMsg = alertMsg + "申請日期不得選取過去日期！\n";
+                } else {
+                    //pass
+                }
+            }
+        }
+
+        if ($("#MS_DATE2").val() == null | $("#MS_DATE2").val().trim() == "") {
+            alertMsg = alertMsg + "請輸入希望完成日期！\n";
+        } else {
+            //date validation on controller
+            if (!isDate($("#MS_DATE2").val())) {
+                alertMsg = alertMsg + "請輸入合理的希望完成日期！\n";
+            } else {
+                if ($("#MS_DATE2").val().trim() < nowStr) {
+                    alertMsg = alertMsg + "希望完成日期不得選取過去日期！\n";
+                } else {
+                    //pass
+                }
+            }
+        }
+
+        if ($("#MS_DATE1").val().trim() != "" && $("#MS_DATE2").val().trim() != "") {
+            if ($("#MS_DATE1").val().trim() > $("#MS_DATE2").val().trim()) {
+                alertMsg = alertMsg + "申請日期請不得大於希望完成日期！\n";
+            } else {
+                //pass check
+            }
+        }
+
+        if ($("#MS_SUBJECT").val() == null | $("#MS_SUBJECT").val().trim() == "") {
+            alertMsg = alertMsg + "請輸入資訊服務主題項目！\r\n";
+        }
+
+        if ($("#MS_CONTENT2").val() == null | $("#MS_CONTENT2").val().trim() == "") {
+            alertMsg = alertMsg + "請輸入修改依據說明！\r\n";
+        }
+
+        if ($("#MS_CONTENT1").val() == null | $("#MS_CONTENT1").val().trim() == "") {
+            alertMsg = alertMsg + "請輸入資訊服務內容！\r\n";
+        }
+
+        if (alertMsg != "") {
+            alert(alertMsg);
+        } else {
+            //window.location.href = "@base_URL" + "@my_controllername" + "/Save"; //不可傳post data
+
+            //Razor Form
+            //using (Html.BeginForm("P_23N01_a", "F_23N01", FormMethod.Post, new { id = "AddForm", name = "EditForm" }))
+            document.forms["AddForm"].submit(); // 成功進入P_23N01_a POST Action
+
+            //HTML Form: 測試失敗
+            //    <form method="post" name="Clt_frm" id="Clt_frm" action="">
+            //library/MisService_wfls.asp?wfls_Action=wfl_MisService_insert()
+            //$("form").attr("action", "SYS_23/F_23N01/wfl_MisService_insert");//路徑異常>>>
+            //$("form").attr("action", "@base_URL" + "@my_controllername" + "wfl_MisService_insert");//路徑異常
+            //$("form").submit();
+        }
+    }
+
+    function chkDate(objSrc) {
+        //先在controller 進行控制
+        //帶補充
+    }
+
+    function fn_Clt_emno_Change_Server(ms_emno, say_name, ms_name) {
+        //搭配手動改員工工號時, 驗證資料是否有效與取得相關資料
+        ////fn_Clt_emno_Change_Server('MS_EMNO','say_name','MS_NAME')
+        //測試手動輸入欄位後, 先執行 $("#MS_EMNO").changeg事件, 再進到onchange fn_Clt_emno_Change_Server執行以下程式
+        var empno = $("#MS_EMNO").val();
+        //var empInfo = "";
+        var empInfo;
+        var empItem = new Array(3);
+        $.ajax({
+            //url: '@Url.Action("checkEmp", "F_23N01")',
+            //url: '@Url.Action("checkEmp", "/CommonCheck")',  //Url 組成錯誤: http://localhost:51962/SYS_23/CommonCheck/checkEmp?emno=008
+            url: '@Url.Action("checkEmp", "../CommonCheck")', //http://localhost:51962/CommonCheck/checkEmp?emno=001
+            data: { emno: empno },
+            success: function (data) {
+                //call is successfully completed and we got result in data
+                //alert("data : " + data);
+                if (data == null || data == "fail") {
+                    alert("您輸入的員工編號 " + empno + " 不存在!!");
+                    $("#MS_EMNO").val('');//清空欄位值
+                } else {
+                    //alert("0)" +  data);//data 空掉 why? 因上述if 判斷是用一個=, 導致植被清空
+                    empInfo = data;
+                    empItem = empInfo.split("!");//切割字串(姓名,部門代碼,部門名稱), 需用雙引號, 別用單引號?
+                    //成功取得資料後再能設值
+                    if (empItem[2] != null && empItem[2] != "") {
+                        //alert("3)" + empItem[0] + empItem[1] + empItem[2]);
+                        //$("#say_name").val(m_emname); //span 使用value 會失敗
+                        $("#say_name").text(empItem[0]);
+                        $("#MS_NAME").val(empItem[0]);
+
+                        var dpnoOld = $("#selDep").val(); //原選單部門代碼舊值
+                        $('#selDep option[value=' + dpnoOld + ']').attr('selected', false);
+                        $('#selDep option[value=' + empItem[1] + ']').attr('selected', true).change();
+                        //change 會引發onchange checkDept事件設定MS_DPNO MS_DPNAME(故取消以下設值), 再續執行以下
+                        //$("#MS_DPNO").val(empItem[1]);
+                        //$("#MS_DPNAME").val(empItem[2]);
+
+                        //第一次輸入異動執行
+                        //alert("fn_Clt_emno_Change_Server3: " + $("#selDep").val() + "==" + $("#selDep option:selected").text());
+                    } else {
+                        //alert("fn_Clt_emno_Change_Server 3else: " + $("#selDep").val() + "==" + $("#selDep option:selected").text());
+                    }
+                }
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                //some errror, some show err msg to user and log the error
+                alert(xhr.responseText);
+            }
+        });
+        //alert("2)" + empItem[0] + "--" + empItem[1] + "--" + empItem[2] + "))))"); // undefined 且此行程式會早於ajax 程式執行, ajax 執行後不會繼續到這段
+    }
+
+    function emp_update(em_no, em_cname, em_dpno) {
+        //搭配下面點選放大鏡ShowList找員工清單, 更新相關欄位值
+        var dpnoOld = $("#selDep").val(); //原選單部門代碼舊值
+
+        //設定需求者資訊
+        $("#MS_EMNO").val(em_no);
+        $("#MS_NAME").val(em_cname);
+        $("#say_name").text(em_cname);
+
+        //$('#selDep option[value=' + em_dpno + ']').attr('selected', true);//時好時壞
+        //上述測試發現, 多次操作後, 多個選項被標註selected, 故最後會以第一個selected 顯示
+        //先將原選定項目selected 註記拿掉, 再設值
+        $('#selDep option[value=' + dpnoOld + ']').attr('selected', false);
+        $('#selDep option[value=' + em_dpno + ']').attr('selected', true).change(); //加入change後, 先轉changeDept 事件再續執行以下程式
+
+        //alert("my_update: " + $("#selDep").val() + "==" + $("#selDep option:selected").text());
+    }
+
+    function ShowList() {
+        //點選放大鏡找員工清單, 搭配emp_update更新相關欄位值
+        //alert("ShowList");
+        let h = screen.availHeight / 2;
+        let w = screen.availWidth * 2 / 3 ;
+        let top = h / 2;
+        let left = screen.availWidth / 6;
+        window.open("/Popup/ShowList_employee", "myWindow",
+            config = "width=" + w + ",height=" + h +
+            ",left=" + left + ",top=" + top + ",toolbar=no,menubar=no," +
+            "resizable=no,status=no,location=no,scrollbars=no")
+    }
+</script>

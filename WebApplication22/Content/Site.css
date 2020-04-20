@@ -1,0 +1,320 @@
+﻿body {
+    padding-top: 0px;
+    padding-bottom: 0px;
+}
+
+/* Set padding to keep content from hitting the edges */
+.body-content {
+    padding-left: 0px;
+    padding-right: 0px;
+}
+
+/* Override the default bootstrap behavior where horizontal description lists 
+   will truncate terms that are too long to fit in the left column 
+*/
+.dl-horizontal dt {
+    white-space: normal;
+}
+
+/* Set width on the form input elements since they're 100% wide by default */
+input,
+select,
+textarea {
+    max-width: 280px;
+}
+
+.navbar {
+    margin: 0;
+    padding: 0;
+}
+
+.navbar-btn, .nav-link {
+    margin: 0.2rem;
+}
+
+    .navbar-btn:not(:disabled) {
+        background-color: blue;
+        color: white;
+    }
+
+.dropdown-submenu .dropdown-toggle::after {
+    transform: rotate(-90deg);
+}
+
+.dropdown-menu {
+    margin: 0;
+    padding: 0;
+    border: 1px solid black;
+    min-width: 20%;
+}
+
+#My_Main_Menu {
+    position: fixed;
+    top: 55px;
+}
+
+    #My_Main_Menu .dropdown-item {
+        margin: 0;
+        padding-top: 0;
+        padding-bottom: 0;
+        padding-left: 2px;
+        padding-right: 2px;
+        background-color: blue;
+        color: yellow;
+    }
+
+        #My_Main_Menu .dropdown-item:hover,
+        #My_Main_Menu .dropdown-submenu:hover > a {
+            background-color: cyan;
+            color: blue;
+        }
+
+.dropdown-submenu {
+    position: relative;
+}
+
+    .dropdown-submenu .dropdown-menu {
+        top: 0;
+        left: 100%;
+        margin-left: 0px;
+        margin-right: 0px;
+    }
+
+.dropdown-menu.t-move-up-1 {
+    top: -1.3em;
+}
+
+.dropdown-menu.t-move-up-2 {
+    top: -2.6em;
+}
+
+.dropdown-menu.t-move-up-3 {
+    top: -3.9em;
+}
+
+.dropdown-menu.t-move-up-4 {
+    top: -5.2em;
+}
+
+.dropdown-menu.t-move-up-5 {
+    top: -6.5em;
+}
+
+.dropdown-menu.t-move-up-6 {
+    top: -7.8em;
+}
+
+.dropdown-menu.t-move-up-7 {
+    top: -9.1em;
+}
+
+.dropdown-menu.t-move-up-8 {
+    top: -10.4em;
+}
+
+.dropdown-menu.t-move-up-9 {
+    top: -11.7em;
+}
+
+.dropdown-menu.t-move-up-10 {
+    top: -13em;
+}
+
+.dropdown-menu.t-move-up-11 {
+    top: -14.3em;
+}
+
+.dropdown-menu.t-move-up-12 {
+    top: -15.6em;
+}
+
+.dropdown-menu.t-move-up-13 {
+    top: -16.9em;
+}
+
+.dropdown-menu.t-move-up-14 {
+    top: -18.2em;
+}
+
+.dropdown-menu.t-move-up-15 {
+    top: -19.5em;
+}
+
+.dropdown-menu.t-move-up-16 {
+    top: -20.8em;
+}
+
+.dropdown-menu.t-move-up-17 {
+    top: -22.1em;
+}
+
+.dropdown-menu.t-move-up-18 {
+    top: -23.4em;
+}
+
+.dropdown-menu.t-move-up-19 {
+    top: -24.7em;
+}
+
+.dropdown-menu.t-move-up-20 {
+    top: -26.0em;
+}
+
+.dropdown-submenu:hover > .dropdown-menu {
+    display: block;
+}
+
+.transart_logo {
+    position: relative;
+    margin: 0;
+    padding: 0;
+    height: 40px;
+    width: 180px;
+}
+
+    .transart_logo img {
+        position: absolute;
+        left: 0px;
+        top: 0px;
+        padding: 0;
+        margin: 0;
+        height: 30px;
+        width: 100px;
+    }
+
+.transart_help {
+    position: absolute;
+    left: 0px;
+    top: 30px;
+    width: 100px;
+    text-align: center;
+    font-size: 10px;
+}
+
+.transart_user {
+    position: absolute;
+    left: 100px;
+    top: -5px;
+    height: 50px;
+    width: 80px;
+    text-align: center;
+    font-size: 12px;
+    background-color: lightcoral;
+}
+
+#my_marquee_div {
+    width: inherit;
+    height: inherit;
+}
+
+#my_marquee_message {
+    position: relative;
+    animation-name: m_example;
+    animation-duration: 10s;
+    animation-iteration-count: infinite;
+    /* animation-delay:1s; */
+    animation-direction: normal;
+    animation-timing-function: linear;
+}
+
+@keyframes m_example {
+    0% {
+        left: 10%;
+        top: 0px;
+        opacity: 1.0;
+    }
+
+    70% {
+        opacity: 1.0;
+    }
+
+    100% {
+        left: 100%;
+        top: 0px;
+        opacity: 0.0;
+    }
+}
+
+@media screen and (min-width: 1280px) {
+    body, .nav-bar, .navbar-btn {
+        font-size: 16px;
+    }
+
+    .dropdown-item, .dropdown-toggle {
+        font-size: 14px;
+    }
+}
+
+@media screen and (min-width: 960px) and (max-width: 1280px) {
+    body, .nav-bar, .navbar-btn {
+        font-size: 14px;
+    }
+
+    .dropdown-item, .dropdown-toggle {
+        font-size: 14px;
+    }
+}
+
+@media screen and (max-width: 960px) {
+    body, .nav-bar, .navbar-btn {
+        FONT-SIZE: 12px;
+    }
+
+    .dropdown-item, .dropdown-toggle {
+        font-size: 12px;
+    }
+}
+
+#ISODOC_table th,
+#ISODOC_table tr,
+#ISODOC_table td,
+#ISODOC_table input {
+    margin: 0;
+    padding: 0;
+}
+
+    #ISODOC_table input.datepicker {
+        width: 75%;
+        text-align: center;
+    }
+
+.ui-dialog-content.ui-widget-content table tr th,
+.ui-dialog-content.ui-widget-content table tr td {
+    margin: 0;
+    padding: 0;
+}
+
+/*實作table 資料列滑鼠focus 改底色的效果*/
+.datatableYellow tr:hover {
+    /*淺黃底*/
+    background-color: #FFFF66;
+}
+
+/*實作table 資料列滑鼠focus 改底色的效果*/
+.datatableGreen tr:hover {
+    /*淺綠底*/
+    background-color: #80FF80;
+}
+
+.datatableBlue tr:hover {
+    /*淺藍底*/
+    background-color: #ACACFF;
+}
+
+.datatableGray tr:hover {
+    /*淺灰底*/
+    background-color: #C0C0C0;
+}
+
+
+
+/*改寫.mainstyle.css 原.heading字體大小與高度, 因在MVC下的畫面會太小太擠 */
+.heading2 {
+    FONT-WEIGHT: bold;
+    FONT-SIZE: 20px;
+    COLOR: white;
+    FONT-FAMILY: "新細明體";
+    BACKGROUND-COLOR: #0000ff;
+    height: 33px
+}
+

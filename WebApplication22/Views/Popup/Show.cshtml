@@ -1,0 +1,70 @@
+﻿@using PagedList
+@using PagedList.Mvc
+@model PagedList.IPagedList<Common.Menu.Popup>
+@{
+    int? m_PageNumber = ViewBag.PageNumber;
+    int? m_PageSize = ViewBag.PageSize;
+    string m_PopupID = ViewBag.PopupID;
+    string m_FieldKind = ViewBag.FieldKind;
+}
+
+<table class="table table-bordered table-hover" cellpadding="0" cellspacing="0">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.FirstOrDefault().Value)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.FirstOrDefault().Text)
+        </th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Value)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Text)
+            </td>
+        </tr>
+    }
+
+</table>
+<div class="d-flex justify-content-center">
+    @Html.PagedListPager(
+        Model,
+        page => Url.Action("Show",
+                           "Popup",
+                           new { PopupID = m_PopupID,
+                                 FieldKind = m_FieldKind,
+                                 PageNumber = page,
+                                 PageSize = m_PageSize
+                           }
+                          ),
+        PagedListRenderOptions.EnableUnobtrusiveAjaxReplacing(
+            new PagedListRenderOptions() {
+                LinkToFirstPageFormat = "<< 第一頁",
+                LinkToPreviousPageFormat = "< 上一頁",
+                LinkToNextPageFormat = "下一頁 >",
+                LinkToLastPageFormat = "最後一頁 >>",
+                DisplayLinkToFirstPage = PagedListDisplayMode.Always,
+                DisplayLinkToPreviousPage = PagedListDisplayMode.Always,
+                DisplayLinkToNextPage = PagedListDisplayMode.Always,
+                DisplayLinkToLastPage = PagedListDisplayMode.Always,
+                DisplayLinkToIndividualPages = false
+                //PageCountAndCurrentLocationFormat = "第 {0} 頁 / 共 {1} 頁",
+                //DisplayPageCountAndCurrentLocation = true,
+                //ItemSliceAndTotalFormat = "第 {0} 到 {1} 項 / 共 {2} 項",
+                //DisplayItemSliceAndTotal = true
+            },
+            new AjaxOptions() {
+                HttpMethod = "GET",
+                UpdateTargetId = m_PopupID,
+                OnComplete = "trigger_setup('" + m_PopupID + "')"
+            }
+        )
+    )
+</div>
+
+

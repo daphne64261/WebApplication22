@@ -1,0 +1,313 @@
+﻿@*
+    改寫Transart\MisService\mser02_l.asp
+    維持HTML設計
+*@
+
+@model PagedList.IPagedList<Data.Models.MisService>
+@using PagedList.Mvc;
+
+@{
+    //接收controller 傳遞變數
+    //string title = ViewBag.Titl;//在前端設定
+    string kind = ViewBag.kind;
+    int? PageSize = ViewBag.PageSize;
+    int? PageNumber = ViewBag.PageNumber;
+
+    //連結UrlPath
+    string my_URL = this.Request.Url.ToString();
+    string my_controllername = this.ViewContext.RouteData.Values["controller"].ToString();
+    int i = my_URL.IndexOf(my_controllername);
+    string base_URL = my_URL.Remove(i);
+
+    //依不同操作類別設定Table 樣式
+    string titleWord = "資訊服務需求單--接單確認";
+    string tableClass = "";
+    int tdStytle = 6;
+
+    if (kind == "1")
+    {
+        titleWord = "資訊服務需求單--接單確認";
+        tableClass = "datatableYellow";
+        tdStytle = 6;
+    }
+    else if (kind == "2")
+    {
+        titleWord = "資訊服務需求單--完工回饋";
+        tableClass = "datatableGreen";
+        tdStytle = 8;
+    }
+    else if (kind == "3")
+    {
+        titleWord = "資訊服務需求單--結單";
+        tableClass = "datatableGray";
+        tdStytle = 7;
+    }
+    else
+    {
+        titleWord = "資訊服務需求單--完工回饋";
+        tableClass = "datatableYellow";
+        tdStytle = 6;
+    }
+
+    //避免日期欄位null, 無法進行資料格式化
+    string pcdate = "";
+    string schdate = "";
+    string acdate = "";
+    string rcdate = "";
+}
+
+@if (TempData["message"] != null)
+{
+    <script type="text/javascript">
+        var message = @Html.Raw(Json.Encode(TempData["message"]));
+        alert(message);
+    </script>
+}
+else
+{
+    //pass
+}
+
+<table border=0 cellspacing=0 cellpadding=0 align=center height="5" style="width:60%">
+    <tr class='heading2'>
+        <td colspan=2>@titleWord</td>
+        <td colspan=@tdStytle align=Right>
+            單號：
+            <input type=text id=MS_NO name=MS_NO size=8 maxlength=8 autocomplete="off" style="height:28px; padding-top:5px;">
+            <input type=hidden id=KIND name=KIND value=@kind>
+            <input type=button value=' 編 輯 ' onclick='DoEdit()' style="height:28px; margin-top:5px;">
+        </td>
+    </tr>
+    <tr class='clsFiledTitleCenter'>
+        <td height='20' width='60' class='clsFiledTitleCenter'>單號</td>
+        <td height='20' width='300' class='clsFiledTitleCenter'>主題</td>
+        <td height='20' width='60' class='clsFiledTitleCenter'>申請者</td>
+        <td height='20' width='70' class='clsFiledTitleCenter'>申請部門</td>
+        <td height='20' width='70' class='clsFiledTitleCenter'>申請日期</td>
+
+        @if (kind == "1")
+        {
+            <td height='20' width='80' class='clsFiledTitleCenter'>希望完成日期</td>
+        }
+        else if (kind == "2")
+        {
+            <td height='20' width='80' class='clsFiledTitleCenter'>預計完成日期</td>
+            <td height='20' width='80' class='clsFiledTitleCenter'>排程日期</td>
+            <td height='20' width='60' class='clsFiledTitleCenter'>預計工時</td>
+        }
+        else if (kind == "3")
+        {
+            <td height='20' width='70' class='clsFiledTitleCenter'>接單日期</td>
+            <td height='20' width='70' class='clsFiledTitleCenter'>完工日期</td>
+        }
+        else
+        {
+            <td height='20' width='80' class='clsFiledTitleCenter'>希望完成日期</td>
+        }
+    </tr>
+    @if (Model != null)
+    {
+        <tr>
+            <td colspan=@tdStytle>
+                <!--<table class="text-center datatable" border=1 cellspacing=0 cellpadding=0 align=center style="behavior:url(../library/tablehl.htc); BORDER-COLLAPSE: collapse; width:100%" hlColor='#FFFF66' slColor='#FFFF66' bordercolor='#D7DCDD'>-->
+                <table class="text-center @tableClass" border=1 cellspacing=0 cellpadding=0 align=center style="behavior:url(../library/tablehl.htc); BORDER-COLLAPSE: collapse; width:100%" hlColor='#FFFF66' slColor='#FFFF66' bordercolor='#D7DCDD'>
+                    
+                    @foreach (var item in Model)
+                    {
+                        <!--
+            <tr height=25 onclick="" window.location.href='mser01_e.asp?MS_no=" & MS_NO & "' "" style='cursor:hand'>
+                -->
+                        <tr height=25 onclick="window.location.href='@Url.Action("P_23N02_e", "F_23N02", new { KIND = kind, MS_NO = item.MS_NO })'" style='cursor:pointer'>
+                            @{
+                                var ACBACKMEMO_Str = item.MS_ACBACKMEMO;
+                                if (ACBACKMEMO_Str == null | ACBACKMEMO_Str == "")
+                                {
+                                    <td width=60>@item.MS_NO</td>
+                                }
+                                else
+                                {
+                                    <td width=60 style='BACKGROUND-COLOR: #FF8080'> @item.MS_NO</td>
+                                }
+                            }
+
+                            <td width=300 align="left">@item.MS_SUBJECT</td>
+                            <td width=60>@item.MS_NAME</td>
+                            <td width=70>@item.MS_DPNAME</td>
+                            <td width=70>@item.MS_DATE1.Value.ToString("yyyy/MM/dd")</td>
+                            @if (kind == "1")
+                            {
+                                @*必填欄位*@
+                                <td width='80'>@item.MS_DATE2.Value.ToString("yyyy/MM/dd")</td>
+                            }
+                            else if (kind == "2")
+                            {
+                                @*將日期資料變數初始化*@
+                                pcdate = "";
+                                schdate = "";
+
+                                if (@item.MS_PCDATE != null)
+                                {
+                                    pcdate = @item.MS_PCDATE.Value.ToString("yyyy/MM/dd");
+                                }
+
+                                if (@item.MS_SCHDATE != null)
+                                {
+                                    schdate = @item.MS_SCHDATE.Value.ToString("yyyy/MM/dd");
+                                }
+                                <td width='80'>@pcdate</td>
+                                <td width='80'>@schdate</td>
+
+                                @*
+                                            <!--
+                        如欄位值null, 使用Value 會出錯
+                        <td width='80'>@item.MS_PCDATE.Value.ToString("yyyy/MM/dd")</td>
+                        <td width='80'>@item.MS_SCHDATE.Value.ToString("yyyy/MM/dd")</td>
+                        -->*@
+                                <td width='60'>@item.MS_PCHOUR</td>
+                            }
+                            else if (kind == "3")
+                            {
+                                @*將日期資料變數初始化*@
+                                acdate = "";
+                                rcdate = "";
+                                if (@item.MS_ACDATE != null)
+                                {
+                                    acdate = @item.MS_ACDATE.Value.ToString("yyyy/MM/dd");
+                                }
+
+                                if (@item.MS_RCDATE != null)
+                                {
+                                    rcdate = @item.MS_RCDATE.Value.ToString("yyyy/MM/dd");
+                                }
+                                <td width='70'>@acdate</td>
+                                <td width='70'>@rcdate</td>
+                                @*
+                                            <!--
+                            如欄位值null, 使用Value 會出錯
+                        <td width='70'>@item.MS_ACDATE.Value.ToString("yyyy/MM/dd")</td>
+                        <td width='70'>@item.MS_RCDATE.Value.ToString("yyyy/MM/dd")</td>
+                            -->*@
+                            }
+                            else
+                            {
+                                @*必填欄位*@
+                                <td width='80'>@item.MS_DATE2.Value.ToString("yyyy/MM/dd")</td>
+                            }
+                        </tr>
+                    }
+                </table>
+            </td>
+        </tr>
+    }
+</table>
+@*資料大於10筆再顯示跳頁元件*@
+@if (Model.TotalItemCount > 10) //用於判斷筆數, 此變數需與controller 定義筆數一致
+{
+    <div class="d-flex justify-content-center">
+        @Html.PagedListPager(
+      //(PagedList.IPagedList<Data.Models.MisService>)TempData["DataRow"],
+      Model,
+       page => Url.Action("P_23N02_l", "F_23N02", new
+       {
+           Kind = kind,
+           PageNumber = page,
+           PageSize = PageSize
+       }
+                         ),
+       new PagedListRenderOptions
+       {
+           LinkToFirstPageFormat = "<< 第一頁",
+           LinkToPreviousPageFormat = "< 上一頁",
+           LinkToNextPageFormat = "下一頁 >",
+           LinkToLastPageFormat = "最後一頁 >>",
+           DisplayLinkToFirstPage = PagedListDisplayMode.Always,
+           DisplayLinkToPreviousPage = PagedListDisplayMode.Always,
+           DisplayLinkToNextPage = PagedListDisplayMode.Always,
+           DisplayLinkToLastPage = PagedListDisplayMode.Always,
+           //DisplayLinkToIndividualPages = false,
+           //PageCountAndCurrentLocationFormat = "第 {0} 頁 / 共 {1} 頁",
+           //DisplayPageCountAndCurrentLocation = true,
+           ItemSliceAndTotalFormat = "第 {0} 到 {1} 項 / 共 {2} 項",
+           DisplayItemSliceAndTotal = true
+       })
+    </div>
+}
+
+
+<script>
+    var kindJS = "@kind";// 直接使用@kind =="1" 會失敗
+    //alert(kindJS);
+
+    $(document).ready(function () {
+
+        //設定TopButton按鈕顯示與動作
+        replaceButtonText("spl_f1", "接單確認");
+        replaceButtonText("spl_f2", "完工回饋");
+
+        //原ASP註解掉//window.systemButton.btnSysF3.setDisplay(true);
+        $("#spl_f3").hide();//預設僅啟用spl_f1與spl_f2兩按鈕, 故隱藏spl_f3
+
+        if (kindJS == "1") {
+            document.getElementById("spl_f1").setAttribute("disabled", true);//反灰停用按鈕
+            //$("#spl_f2").show(); //顯示
+        } else if (kindJS == "2") {
+            //$("#spl_f1").show();
+            document.getElementById("spl_f2").setAttribute("disabled", true);//反灰停用按鈕
+        } else if (kindJS == "3") {
+            //$("#spl_f1").show();
+            //$("#spl_f2").show();
+        } else {
+            document.getElementById("spl_f1").setAttribute("disabled", true);//反灰停用按鈕
+            //$("#spl_f2").show(); //顯示
+        }
+
+        $("#spl_f1").click(function () {
+            //點選接單確認
+            //alert("section f1");
+            window.location.href = "@base_URL" + "@my_controllername" + "/P_23N02_l?Kind=1";
+        });
+
+        $("#spl_f2").click(function () {
+            //點選完工回饋
+            //alert("section f2");
+            window.location.href = "@base_URL" + "@my_controllername" + "/P_23N02_l?Kind=2";
+        });
+
+        $("#spl_f3").click(function () {
+            //點選結單
+            //alert("section f3");
+            window.location.href = "@base_URL" + "@my_controllername" + "/P_23N02_l?Kind=3";
+        });
+    });
+
+    function DoEdit() {
+        var MS_NO = $("#MS_NO").val();
+        if (MS_NO == null | MS_NO != "") {
+            window.location.href = "@base_URL" + "@my_controllername" + "/P_23N02_e?MS_NO=" + MS_NO;
+        } else {
+            alert("請輸入單號！");
+            //以下設定滑鼠焦點, 無效
+            //document.all.MS_NO.focus();
+            //$("#MS_NO").focus();
+            document.getElementById("#MS_NO").focus();
+        }
+    }
+
+    function replaceButtonText(buttonId, text) {
+        if (document.getElementById) {
+            var button = document.getElementById(buttonId);
+            if (button) {
+                if (button.childNodes[0]) {
+                    button.childNodes[0].nodeValue = text;
+                }
+                else if (button.value) {
+                    button.value = text;
+                }
+                else //if (button.innerHTML)
+                {
+                    button.innerHTML = text;
+                }
+            }
+        }
+    }
+</script>

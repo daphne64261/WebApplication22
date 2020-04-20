@@ -1,0 +1,115 @@
+﻿@using Common.Menu
+@model Data.Models.vehicle
+@{
+    SelectList car_type_list = new Car_Type_List();
+    SelectList car_kind_list = new Car_Kind_List();
+}
+
+@using (Html.BeginForm("Add", "F_01E01", FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="container">
+        <div class="table-responsive-md">
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+            <table class="table table-bordered table-responsive-sm">
+                <thead align="left" class="thead-dark">
+                    <tr class="table-info">
+                        <th colspan="6"> 車輛資料建立-新增 </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            @Html.LabelFor(model => model.VE_EMNO, null, new { @class = "control-label " })
+                            <i class="fa fa-search Find_Emp_of_Dept" data-to-value-id="VE_EMNO" data-to-text-id="VE_NAME" data-dpno-id="VE_DPNO"></i>
+                        </td>
+                        <td colspan="3">
+                            @Html.EditorFor(model => model.VE_EMNO, null, new { id = "VE_EMNO", @class = "form-control" })
+                            @Html.ValidationMessageFor(model => model.VE_EMNO, "", new { @class = "text-danger" })
+                        </td>
+                        <td>
+                            @Html.LabelFor(model => model.VE_CARTYPE, null, new { @class = "control-label " })
+                        </td>
+                        <td>
+                            @Html.DropDownListFor(model => model.VE_CARTYPE, @car_type_list, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(model => model.VE_CARTYPE, "", new { @class = "text-danger" })
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            @Html.LabelFor(model => model.VE_NAME, null, new { @class = "control-label " })
+                        </td>
+                        <td>
+                            @Html.EditorFor(model => model.VE_NAME, null, new { id = "VE_NAME", @class = "form-control" })
+                            @Html.ValidationMessageFor(model => model.VE_NAME, "", new { @class = "text-danger" })
+                        </td>
+                        <td>
+                            @Html.LabelFor(model => model.VE_DPNAME, null, new { @class = "control-label " })
+                            <i class="fa fa-search Find" data-to-value-id="VE_DPNO" data-to-text-id="VE_DPNAME" data-from="dept"></i>
+                        </td>
+                        <td>
+                            @Html.HiddenFor(model => model.VE_DPNO, new { id = "VE_DPNO" })
+                            @Html.EditorFor(model => model.VE_DPNAME, null, new { id = "VE_DPNAME", @class = "form-control" })
+                            @Html.ValidationMessageFor(model => model.VE_DPNAME, "", new { @class = "text-danger" })
+                        </td>
+                        <td>
+                            @Html.LabelFor(model => model.VE_KIND, null, new { @class = "control-label " })
+                        </td>
+                        <td>
+                            @Html.DropDownListFor(model => model.VE_KIND, @car_kind_list, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(model => model.VE_KIND, "", new { @class = "text-danger" })
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            @Html.LabelFor(model => model.VE_NO, null, new { @class = "control-label " })
+                        </td>
+                        <td>
+                            @Html.EditorFor(model => model.VE_NO, null, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(model => model.VE_NO, "", new { @class = "text-danger" })
+                        </td>
+                        <td>
+                            @Html.LabelFor(model => model.VE_COLOR, null, new { @class = "control-label " })
+                        </td>
+                        <td>
+                            @Html.EditorFor(model => model.VE_COLOR, null, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(model => model.VE_COLOR, "", new { @class = "text-danger" })
+                        </td>
+                        <td>
+                            @Html.LabelFor(model => model.VE_TEL, null, new { @class = "control-label " })
+                        </td>
+                        <td>
+                            @Html.EditorFor(model => model.VE_TEL, null, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(model => model.VE_TEL, "", new { @class = "text-danger" })
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            @Html.LabelFor(model => model.VE_PARKNO, null, new { @class = "control-label " })
+                        </td>
+                        <td>
+                            @Html.EditorFor(model => model.VE_PARKNO, null, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(model => model.VE_PARKNO, "", new { @class = "text-danger" })
+                        </td>
+                        <td>
+                            @Html.LabelFor(model => model.VE_PARKAREA, null, new { @class = "control-label " })
+                        </td>
+                        <td colspan="3">
+                            @Html.EditorFor(model => model.VE_PARKAREA, null, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(model => model.VE_PARKAREA, "", new { @class = "text-danger" })
+                            @Html.HiddenFor(model => model.VE_SEQNO, new { id = "VE_SEQNO" })
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+}
+<script>
+    $(document).ready(function () {
+        $("#spl_qry").click(function () {
+            location.href = "/SYS_01/F_01E01/P_01E01_q";
+        });
+    });
+</script>

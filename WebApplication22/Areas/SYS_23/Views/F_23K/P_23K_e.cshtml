@@ -1,0 +1,72 @@
+﻿@model List<Data.Models.ISODOC>
+
+@using (Html.BeginForm("Save", "F_23K", FormMethod.Post))
+{
+    <table id="ISODOC_table" class="table table-bordered table-hover table-responsive-sm">
+        <thead class="thead-dark">
+            <tr>
+                <th class="text-left" Colspan=7>ISO文件一覽表編修</th>
+            </tr>
+            <tr>
+                <th class="text-center" style="vertical-align:middle; width:10%" Rowspan=4>@Html.LabelFor(model => model[0].The_No)</th>
+                <th class="text-center" style="vertical-align:middle; width:20%" Rowspan=4>@Html.LabelFor(model => model[0].The_Name)</th>
+                <th class="text-center" Colspan=5>版 次 ／發 行 日 期</th>
+            </tr>
+            <tr>
+                <th class="text-center" style="width:14%">@Html.LabelFor(model => model[0].v1)</th>
+                <th class="text-center" style="width:14%">@Html.LabelFor(model => model[0].v2)</th>
+                <th class="text-center" style="width:14%">@Html.LabelFor(model => model[0].v3)</th>
+                <th class="text-center" style="width:14%">@Html.LabelFor(model => model[0].v4)</th>
+                <th class="text-center" style="width:14%">@Html.LabelFor(model => model[0].v5)</th>
+            </tr>
+            <tr>
+                <th class="text-center" style="width:14%">@Html.LabelFor(model => model[0].v6)</th>
+                <th class="text-center" style="width:14%">@Html.LabelFor(model => model[0].v7)</th>
+                <th class="text-center" style="width:14%">@Html.LabelFor(model => model[0].v8)</th>
+                <th class="text-center" style="width:14%">@Html.LabelFor(model => model[0].v9)</th>
+                <th class="text-center" style="width:14%">@Html.LabelFor(model => model[0].v10)</th>
+            </tr>
+            <tr>
+                <th class="text-center" style="width:14%">@Html.LabelFor(model => model[0].v11)</th>
+                <th class="text-center" style="width:14%">@Html.LabelFor(model => model[0].v12)</th>
+                <th class="text-center" style="width:14%">@Html.LabelFor(model => model[0].v13)</th>
+                <th class="text-center" style="width:14%">@Html.LabelFor(model => model[0].v14)</th>
+                <th class="text-center" style="width:14%">@Html.LabelFor(model => model[0].v15)</th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (int i = 0; i < Model.Count; i++)
+            {
+                <tr>
+                    <td class="text-center" style="vertical-align:middle" Rowspan=3>
+                        @Html.HiddenFor(model => model[i].The_Kind)
+                        @Html.HiddenFor(model => model[i].The_No)
+                        @Html.DisplayFor(model => model[i].The_No)
+                    </td>
+                    <td class="text-left" style="vertical-align:middle" Rowspan=3>
+                        @Html.EditorFor(model => model[i].The_Name, new { htmlAttributes = new { @class = "" } })
+                    </td>
+                    <td class="text-right">1. @Html.EditorFor(model => model[i].v1, new { htmlAttributes = new { id = "v1_" + i, @class = "datepicker", @type = "text" } })</td>
+                    <td class="text-right">2. @Html.EditorFor(model => model[i].v2, new { htmlAttributes = new { id = "v2_" + i, @class = "datepicker", @type = "text" } })</td>
+                    <td class="text-right">3. @Html.EditorFor(model => model[i].v3, new { htmlAttributes = new { id = "v3_" + i, @class = "datepicker", @type = "text" } })</td>
+                    <td class="text-right">4. @Html.EditorFor(model => model[i].v4, new { htmlAttributes = new { id = "v4_" + i, @class = "datepicker", @type = "text" } })</td>
+                    <td class="text-right">5. @Html.EditorFor(model => model[i].v5, new { htmlAttributes = new { id = "v5_" + i, @class = "datepicker", @type = "text" } })</td>
+                </tr>
+                <tr>
+                    <td class="text-right">6. @Html.EditorFor(model => model[i].v6, new { htmlAttributes = new { id = "v6_" + i, @class = "datepicker", @type = "text" } })</td>
+                    <td class="text-right">7. @Html.EditorFor(model => model[i].v7, new { htmlAttributes = new { id = "v7_" + i, @class = "datepicker", @type = "text" } })</td>
+                    <td class="text-right">8. @Html.EditorFor(model => model[i].v8, new { htmlAttributes = new { id = "v8_" + i, @class = "datepicker", @type = "text" } })</td>
+                    <td class="text-right">9. @Html.EditorFor(model => model[i].v9, new { htmlAttributes = new { id = "v9_" + i, @class = "datepicker", @type = "text" } })</td>
+                    <td class="text-right">10. @Html.EditorFor(model => model[i].v10, new { htmlAttributes = new { id = "v10_" + i, @class = "datepicker", @type = "text" } })</td>
+                </tr>
+                <tr>
+                    <td class="text-right">11. @Html.EditorFor(model => model[i].v11, new { htmlAttributes = new { id = "v11_" + i, @class = "datepicker", @type = "text" } })</td>
+                    <td class="text-right">12. @Html.EditorFor(model => model[i].v12, new { htmlAttributes = new { id = "v12_" + i, @class = "datepicker", @type = "text" } })</td>
+                    <td class="text-right">13. @Html.EditorFor(model => model[i].v13, new { htmlAttributes = new { id = "v13_" + i, @class = "datepicker", @type = "text" } })</td>
+                    <td class="text-right">14. @Html.EditorFor(model => model[i].v14, new { htmlAttributes = new { id = "v14_" + i, @class = "datepicker", @type = "text" } })</td>
+                    <td class="text-right">15. @Html.EditorFor(model => model[i].v15, new { htmlAttributes = new { id = "v15_" + i, @class = "datepicker", @type = "text" } })</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

@@ -1,0 +1,49 @@
+﻿@{
+    ViewBag.Title = "公務車加油及維護建立--查詢";
+}
+<link href="~/Content/mainstyle.css" rel="stylesheet" />
+<form name="form1" method="post" onsubmit="return false">
+    <center>
+        <table width="400" border="0" cellspacing="1" cellpadding="0">
+            <tr>
+                <td colspan=3 class='heading' width="400" height=25>公務車加油及維護建立--查詢</td>
+            </tr>
+            <tr height=25>
+                <td class="clsTableTitleCenter" width="100">車　號</td>
+                <td class="clsTableTitleLeft" width="200">
+                    @Html.Action("GetCarNoMenu", new { ve_no = "" })
+                </td>
+                <td width="100" class="clsTableTitleCenter" rowspan=2>
+                    <input type="button" name="btn" value="確　定" class="clsButton" onclick="DoQry()">
+                </td>
+            </tr>
+            <tr height=25>
+                <td class="clsTableTitleCenter" width="100">維護日期</td>
+                <td class="clsTableTitleLeft" width="200">
+                    <input type="text" id="Date1" name="Date1" class="datepicker" size="10" maxlength="10">
+                    ～
+                    <input type="text" id="Date2" name="Date2" class="datepicker" size="10" maxlength="10">
+                </td>
+            </tr>
+        </table>
+    </center>
+</form>
+<script>
+    $(document).ready(function () {
+        $("#spl_add").click(function () {
+            location.href = "/SYS_01/F_01E05/P_01E05_a";
+        });
+    });
+    function DoQry() {
+        var vm_carno, Date1, Date2;
+
+        vm_carno = $("#selCarNo").val().trim();
+        Date1 = $("#Date1").val().trim();
+        Date2 = $("#Date2").val().trim();
+
+        //載入指定頁面資料
+        URL = "P_01E05_l?vm_carno=" + vm_carno + "&Date1=" + Date1 + "&Date2=" + Date2;
+        sFeature = "status=no,left=500,top=150,width=720,height=550,resizable=yes,toolbar=no,titlebar=yes,menubar=no";
+        window.open(URL, "_blank", sFeature);
+    }
+</script>

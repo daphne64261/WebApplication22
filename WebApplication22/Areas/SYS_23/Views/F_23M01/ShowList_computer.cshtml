@@ -1,0 +1,79 @@
+﻿@model PagedList.IPagedList<Data.Models.computer>
+@using PagedList.Mvc;
+@Styles.Render("~/Content/css")
+<style>
+    #ShowList_Table {
+        width: 50%
+    }
+
+        #ShowList_Table th,
+        #ShowList_Table tr,
+        #ShowList_Table td {
+            margin: 0;
+            padding: 0;
+        }
+</style>
+@{
+    string m_field_id = ViewBag.field_id;
+    int m_com_kind = ViewBag.com_kind;
+    int m_page_number = ViewBag.page_number;
+    int m_page_size = ViewBag.page_size;
+}
+<div class="d-flex justify-content-center">
+    <table id="ShowList_Table" class="table table-bordered table-hover table-condensed">
+        <thead class="bg-info text-left">
+            <tr>
+                <th>
+                    設備編號
+                </th>
+                <th>
+                    設備名稱
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr onclick='Pass("@m_field_id", "@item.com_no.Trim()")'>
+                    <td>
+                        @Html.DisplayFor(modelitem => item.com_no)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelitem => item.com_name)
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+<div class="d-flex justify-content-center">
+    @Html.PagedListPager(
+      Model,
+      page => Url.Action("ShowList_computer", "F_23M01", new { field_id = m_field_id,
+          com_kind = m_com_kind,
+          page_number = page,
+          page_size = m_page_size }
+                        ),
+      new PagedListRenderOptions
+      {
+          LinkToFirstPageFormat = "<< 第一頁",
+          LinkToPreviousPageFormat = "< 上一頁",
+          LinkToNextPageFormat = "下一頁 >",
+          LinkToLastPageFormat = "最後一頁 >>",
+          DisplayLinkToFirstPage = PagedListDisplayMode.Always,
+          DisplayLinkToPreviousPage = PagedListDisplayMode.Always,
+          DisplayLinkToNextPage = PagedListDisplayMode.Always,
+          DisplayLinkToLastPage = PagedListDisplayMode.Always,
+          DisplayLinkToIndividualPages = false
+          //PageCountAndCurrentLocationFormat = "第 {0} 頁 / 共 {1} 頁",
+          //DisplayPageCountAndCurrentLocation = true,
+          //ItemSliceAndTotalFormat = "第 {0} 到 {1} 項 / 共 {2} 項",
+          //DisplayItemSliceAndTotal = true
+      })
+</div>
+<script>
+    function Pass(field_id, value) {
+        window.opener.my_update(field_id, value);
+        window.close();
+    }
+</script>

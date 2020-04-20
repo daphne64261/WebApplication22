@@ -1,0 +1,340 @@
+﻿@model WebApplication22.Areas.SYS_23.Models.Edit_Model
+@{
+    SelectList s_com_kind = ViewBag.select_com_kind;
+    SelectList s_mon_kind = ViewBag.select_mon_kind;
+}
+
+@using (Html.BeginForm("Save", "F_23M01", FormMethod.Post, new {@id = "com01_e_form" }))
+{
+    @Html.AntiForgeryToken()
+    <table class="table table-bordered table-hover table-condensed">
+        <thead class="bg-primary text-left">
+            <tr>
+                <th colspan="9">
+                    電腦設備資料建立--編輯
+                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                    @Html.HiddenFor(model => model.Computer.com_dsn)
+
+                </th>
+            </tr>
+        </thead>
+        <tbody class="bg-info text-left">
+            <tr>
+                <td style="width:12%">
+                    @Html.LabelFor(model => model.Computer.com_kind)
+                </td>
+                <td colspan="2" style="width:22%">
+                    @Html.DropDownListFor(model => model.Computer.com_kind, s_com_kind)
+                    @Html.ValidationMessageFor(model => model.Computer.com_kind, "", new { @class = "text-danger" })
+                </td>
+                <td style="width:12%">
+                    @Html.LabelFor(model => model.Computer.com_no)
+                </td>
+                <td colspan="2" style="width:22%">
+                    @Html.EditorFor(model => model.Computer.com_no)
+                    @Html.ValidationMessageFor(model => model.Computer.com_no, "", new { @class = "text-danger" })
+                </td>
+                <td style="width:12%">
+                    @Html.LabelFor(model => model.Computer.com_name)
+                </td>
+                <td colspan="2" style="width:20%">
+                    @Html.EditorFor(model => model.Computer.com_name)
+                    @Html.ValidationMessageFor(model => model.Computer.com_name, "", new { @class = "text-danger" })
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    @Html.LabelFor(model => model.Computer.com_no1)
+                </td>
+                <td colspan="2">
+                    @Html.EditorFor(model => model.Computer.com_no1)
+                    @Html.ValidationMessageFor(model => model.Computer.com_no1, "", new { @class = "text-danger" })
+                </td>
+                <td>
+                    @Html.LabelFor(model => model.Computer.com_bdate)
+                </td>
+                <td colspan="2">
+                    @Html.EditorFor(model => model.Computer.com_bdate, new { htmlAttributes = new { @class = "datepicker" } })
+                    @Html.ValidationMessageFor(model => model.Computer.com_bdate, "", new { @class = "text-danger" })
+                </td>
+                <td>
+                    @Html.LabelFor(model => model.Computer.com_company)
+                </td>
+                <td colspan="2">
+                    @Html.EditorFor(model => model.Computer.com_company)
+                    @Html.ValidationMessageFor(model => model.Computer.com_company, "", new { @class = "text-danger" })
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    @Html.LabelFor(model => model.Computer.com_money)
+                </td>
+                <td colspan="2">
+                    @Html.EditorFor(model => model.Computer.com_money, new { htmlAttributes = new { @style = "max-width:50%; text-align:right" } })
+                    @Html.ValidationMessageFor(model => model.Computer.com_money, "", new { @class = "text-danger" })
+
+                    @Html.DropDownListFor(model => model.Computer.mon_kind, s_mon_kind, new { @style = "max-width:30%" })
+                    @Html.ValidationMessageFor(model => model.Computer.mon_kind, "", new { @class = "text-danger" })
+                </td>
+                <td>
+                    @Html.LabelFor(model => model.Computer.com_os)
+                </td>
+                <td colspan="2">
+                    @Html.EditorFor(model => model.Computer.com_os)
+                    @Html.ValidationMessageFor(model => model.Computer.com_os, "", new { @class = "text-danger" })
+                </td>
+                <td>
+                    @Html.LabelFor(model => model.Computer.com_ip)
+                </td>
+                <td colspan="2">
+                    @Html.EditorFor(model => model.Computer.com_ip)
+                    @Html.ValidationMessageFor(model => model.Computer.com_ip, "", new { @class = "text-danger" })
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    @Html.LabelFor(model => model.Computer.com_use)
+                </td>
+                <td colspan="2">
+                    @Html.EditorFor(model => model.Computer.com_use)
+                    @Html.ValidationMessageFor(model => model.Computer.com_use, "", new { @class = "text-danger" })
+                </td>
+                <td>
+                    @Html.HiddenFor(model => model.Computer.com_dpno)
+                    @Html.LabelFor(model => model.Computer.com_dpname)
+                </td>
+                <td colspan="2">
+                    @Html.EditorFor(model => model.Computer.com_dpname)
+                    @Html.ValidationMessageFor(model => model.Computer.com_dpname, "", new { @class = "text-danger" })
+                </td>
+                <td>
+                    @Html.LabelFor(model => model.Computer.com_cname)
+                </td>
+                <td colspan="2">
+                    @Html.EditorFor(model => model.Computer.com_emno, new { htmlAttributes = new { @style = "max-width:25%" } })
+                    @Html.ValidationMessageFor(model => model.Computer.com_emno, "", new { @class = "text-danger" })
+                    <i class="fa fa-search" onclick="ShowList();"></i>
+                    @Html.EditorFor(model => model.Computer.com_cname, new { htmlAttributes = new { @style = "max-width:45%" } })
+                    @Html.ValidationMessageFor(model => model.Computer.com_cname, "", new { @class = "text-danger" })
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    @Html.LabelFor(model => model.Computer.com_place)
+                </td>
+                <td colspan="2">
+                    @Html.EditorFor(model => model.Computer.com_place)
+                    @Html.ValidationMessageFor(model => model.Computer.com_place, "", new { @class = "text-danger" })
+                </td>
+                <td>
+                    @Html.LabelFor(model => model.Computer.com_usb)
+                </td>
+                <td colspan="2">
+                    @Html.CheckBoxFor(model => model.bool_com_usb, new { @style = "max-width:10%" })
+                    @Html.ValidationMessageFor(model => model.bool_com_usb, "", new { @class = "text-danger" })
+                    @Html.EditorFor(model => model.Computer.com_usb1, new { htmlAttributes = new { @style = "max-width:80%" } })
+                    @Html.ValidationMessageFor(model => model.Computer.com_usb1, "", new { @class = "text-danger" })
+                </td>
+                <td>
+                    @Html.LabelFor(model => model.Computer.com_admin)
+                </td>
+                <td colspan="2">
+                    @Html.CheckBoxFor(model => model.bool_com_admin, new { @style = "max-width:10%" })
+                    @Html.ValidationMessageFor(model => model.bool_com_admin, "", new { @class = "text-danger" })
+                    @Html.EditorFor(model => model.Computer.com_admin1, new { htmlAttributes = new { @style = "max-width:80%" } })
+                    @Html.ValidationMessageFor(model => model.Computer.com_admin1, "", new { @class = "text-danger" })
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    @Html.LabelFor(model => model.Computer.com_date)
+                </td>
+                <td colspan="2">
+                    @Html.EditorFor(model => model.Computer.com_date, new { htmlAttributes = new { @class = "datepicker" } })
+                    @Html.ValidationMessageFor(model => model.Computer.com_date, "", new { @class = "text-danger" })
+                </td>
+                <td>
+                    @Html.LabelFor(model => model.Computer.com_account)
+                </td>
+                <td colspan="2">
+                    @Html.EditorFor(model => model.Computer.com_account)
+                    @Html.ValidationMessageFor(model => model.Computer.com_account, "", new { @class = "text-danger" })
+                </td>
+                <td>
+                    @Html.LabelFor(model => model.Computer.com_password)
+                </td>
+                <td colspan="2">
+                    @Html.EditorFor(model => model.Computer.com_password)
+                    @Html.ValidationMessageFor(model => model.Computer.com_password, "", new { @class = "text-danger" })
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    @Html.LabelFor(model => model.Computer.com_udate)
+                </td>
+                <td colspan="2">
+                    @Html.EditorFor(model => model.Computer.com_udate, new { htmlAttributes = new { @class = "datepicker" } })
+                    @Html.ValidationMessageFor(model => model.Computer.com_udate, "", new { @class = "text-danger" })
+                </td>
+                <td> </td>
+                <td colspan="2"></td>
+                <td> </td>
+                <td colspan="2"></td>
+            </tr>
+            <tr>
+                <td>
+                    @Html.LabelFor(model => model.Computer.com_standard)
+                </td>
+                <td colspan="8">
+                    @Html.TextAreaFor(model => model.Computer.com_standard, 6, 100, new { @style = "max-width:90%" })
+                    @Html.ValidationMessageFor(model => model.Computer.com_standard, "", new { @class = "text-danger" })
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    @Html.LabelFor(model => model.Computer.com_del)
+                </td>
+                <td colspan="2">
+                    @Html.CheckBoxFor(model => model.bool_com_del, new { @style = "max-width:10%" })
+                    @Html.ValidationMessageFor(model => model.Computer.com_del, "", new { @class = "text-danger" })
+                </td>
+                <td>
+                    @Html.LabelFor(model => model.Computer.com_ddate)
+                </td>
+                <td colspan="2">
+                    @Html.EditorFor(model => model.Computer.com_ddate, new { htmlAttributes = new { @class = "datepicker" } })
+                    @Html.ValidationMessageFor(model => model.Computer.com_ddate, "", new { @class = "text-danger" })
+                </td>
+                <td>
+                    @Html.LabelFor(model => model.Computer.com_dreason)
+                </td>
+                <td colspan="2">
+                    @Html.EditorFor(model => model.Computer.com_dreason)
+                    @Html.ValidationMessageFor(model => model.Computer.com_dreason, "", new { @class = "text-danger" })
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    @Html.HiddenFor(model => model.Computer.com_demno1, new { @class = "" })
+                    @Html.LabelFor(model => model.Computer.com_dname1)
+                </td>
+                <td colspan="2">
+                    @Html.EditorFor(model => model.Computer.com_dname1)
+                    @Html.ValidationMessageFor(model => model.Computer.com_dname1, "", new { @class = "text-danger" })
+                </td>
+                <td>
+                    @Html.HiddenFor(model => model.Computer.com_demno2, new { @class = "" })
+                    @Html.LabelFor(model => model.Computer.com_dname2)
+                </td>
+                <td colspan="2">
+                    @Html.EditorFor(model => model.Computer.com_dname2)
+                    @Html.ValidationMessageFor(model => model.Computer.com_dname2, "", new { @class = "text-danger" })
+                </td>
+                <td>
+                    @Html.LabelFor(model => model.Computer.com_daction)
+                </td>
+                <td colspan="2">
+                    @Html.EditorFor(model => model.Computer.com_daction)
+                    @Html.ValidationMessageFor(model => model.Computer.com_daction, "", new { @class = "text-danger" })
+                </td>
+            </tr>
+        </tbody>
+    </table>
+}
+<br />
+<table class="table table-bordered table-hover table-condensed">
+    <thead class="bg-warning text-left">
+        <tr>
+            <th>
+                附 加 檔 案　　　　注意：重新上傳檔案則會取代原始附加檔案
+            </th>
+        </tr>
+    </thead>
+    <tbody class="bg-info text-left">
+        <tr>
+            <td>
+                @{
+                    string m_picture = (Model.Computer.com_picture ?? "").Trim();
+                    if (String.IsNullOrEmpty(m_picture))
+                    {
+                        @:無上傳照片
+                    }
+                    else
+                    {
+                        @:<i class="fa fa fa-folder-open-o" style="font-size:36px"></i>
+                        @:&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+                        @:<img src="@Url.Content(m_picture)" style="height:60px;width:80px;" />
+                    }
+                }
+            </td>
+        </tr>
+    </tbody>
+</table>
+<br />
+<table class="table table-bordered table-hover table-condensed" cellpadding="0" cellspacing="0">
+    <thead class="bg-warning text-left">
+        <tr>
+            <th>
+                新 增 檔 案　　　　注意：上傳檔案大小限制為 100 KB
+            </th>
+        </tr>
+    </thead>
+    <tbody class="bg-light text-left">
+        <tr>
+            <td>
+                @using (Html.BeginForm("DoUpload1",
+                                       "F_23M01",
+                                       FormMethod.Post,
+                                       new { enctype = "multipart/form-data" }))
+                {
+                    <div>
+                        @{
+                            int m_com_dsn = Model.Computer.com_dsn;
+                        }
+                        @Html.Hidden("com_dsn", m_com_dsn)
+                        @Html.TextBox("picture_file", "", new { type = "file", @class = "btn btn-info" })
+                        <br />
+                        <br />
+                        <br />
+                        <button type="submit" class="btn btn-success">
+                            上傳檔案
+                        </button>
+                    </div>
+                }
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+
+<script>
+    $("#spl_add").click(function () {
+        location.href = "/SYS_23/F_23M01/P_23M01_a";
+    });
+    $("#spl_save").click(function () {
+        $("#com01_e_form").submit();
+    });
+    $("#spl_del").click(function () {
+        var s = $("#com01_e_form").attr("action");
+        s = s.replace("Save", "Delete");
+        $("#com01_e_form").attr("action", s);
+        $("#com01_e_form").submit();
+    });
+    $("#spl_qry").click(function () {
+        location.href = "/SYS_23/F_23M01/P_23M01_q";
+    });
+    function my_update(em_no, em_cname) {
+        $("#Computer_com_emno").val(em_no);
+        $("#Computer_com_cname").val(em_cname);
+    }
+    function ShowList() {
+        let h = screen.availHeight / 2;
+        let w = screen.availWidth / 2;
+        let top = h / 2;
+        let left = w / 2;
+        window.open("/SYS_23/F_23M01/ShowList_employee", "myWindow",
+            config = "width=" + w + ",height=" + h +
+            ",left=" + left + ",top=" + top + ",toolbar=no,menubar=no," +
+            "resizable=no,status=no,location=no,scrollbars=no")
+    }
+</script>

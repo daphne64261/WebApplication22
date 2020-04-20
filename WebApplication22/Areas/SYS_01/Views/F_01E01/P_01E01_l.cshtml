@@ -1,0 +1,79 @@
+﻿@using Common.Menu
+@model IEnumerable<Data.Models.vehicle>
+@{
+    SelectList car_type_list = new Car_Type_List();
+    SelectList car_kind_list = new Car_Kind_List();
+}
+<h2>
+    車輛資料查詢-結果
+</h2>
+<hr>
+<div class="container">
+    <div class="table-responsive-sm">
+        <table class="table table-bordered table-hover">
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.VE_CARTYPE)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.VE_KIND)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.VE_EMNO)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.VE_NAME)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.VE_NO)
+                </th>
+            </tr>
+
+            @foreach (var item in Model)
+            {
+                <tr>
+                    @{
+                        string t = Decimal.ToInt32(item.VE_CARTYPE ?? 0).ToString();
+                        string VE_CARTYPE = car_type_list.Where(x => x.Value == t).Select(x => x.Text).First();
+                        string k = Decimal.ToInt32(item.VE_KIND).ToString();
+                        string VE_KIND = car_kind_list.Where(x => x.Value == k).Select(x => x.Text).First();
+                    }
+                    <td>
+                        @Html.HiddenFor(modelItem => item.VE_SEQNO, new { id = "VE_SEQNO" })
+                        @Html.DisplayName(VE_CARTYPE)
+                    </td>
+                    <td>
+                        @Html.DisplayName(VE_KIND)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.VE_EMNO)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.VE_NAME)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.VE_NO)
+                    </td>
+                </tr>
+            }
+        </table>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        $("table tbody tr").click(function () {
+            var VE_SEQNO = $(this).find("#VE_SEQNO").val();
+            var m_form = '<form action="/SYS_01/F_01E01/P_01E01_e" method="POST">' +
+                '<input type="hidden" name="VE_SEQNO" value="' + VE_SEQNO + '">' +
+                '</form>';
+            //alert(m_form);
+            $(m_form).appendTo('body').submit();
+        });
+        $("#spl_add").click(function () {
+            location.href = "/SYS_01/F_01E01/P_01E01_a";
+        });
+        $("#spl_cancel").click(function () {
+            location.href = "/SYS_01/F_01E01/P_01E01_q";
+        });
+    });
+</script>

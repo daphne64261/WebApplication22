@@ -1,0 +1,66 @@
+﻿@using Common.Menu
+@{
+    string EM_NAME = (string)Session[TARGET.user_id];
+    string DP_NAME = "政伸公司";
+    string SYS_DATE = DateTime.Today.ToString("yyyy/MM/dd");
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @Scripts.Render("~/bundles/jqueryval")
+    @RenderSection("scripts", required: false)
+    <title>@ViewBag.Title</title>
+</head>
+<body>
+    <nav class="navbar fixed-top navbar-expand-sm bg-light navbar-light">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="/">
+                    <div id="transart_logo" class="transart_logo">
+                        <img src="~/my_images/logo.png" alt="Logo">
+                        <span class="transart_help">操作說明請按[F1]</span>
+                        <div class="transart_user">
+                            <span>@EM_NAME</span><br />
+                            <span>@DP_NAME</span><br />
+                            <span>@SYS_DATE</span>
+                        </div>
+                    </div>
+                </a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#Top_Menu" aria-controls="Top_Menu" aria-expanded="false">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+            </div>
+            <div class="collapse navbar-collapse" id="Top_Menu">
+                <ul class="nav navbar-nav">
+                    @{Html.RenderAction("TopButtons", "Home", new { area = "" });}
+                </ul>
+                @*
+                    <ul class="nav navbar-nav ml-auto">
+                        <li class="nav-item">
+                            <button type="button" id="login" class="btn navbar-btn btn-info">
+                                <i class="fa fa-sign-in"></i> 登入
+                            </button>
+                        </li>
+                    </ul>
+                *@
+            </div>
+        </div>
+    </nav>
+    <div style="position:absolute; top:55px; width: 100%">
+        <div style="z-index:1;">
+            @{ Html.RenderAction("MainMenu", "Home", new { area = "" });}
+        </div>
+        <div id="main" style="z-index:0; width: 100%">
+            @RenderBody()
+        </div>
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,217 @@
+﻿@model WebApplication22.Areas.SYS_23.Models.RejectDetail
+@{
+    string MM_NO = Model.m_MisModify.MM_NO.Trim();
+    string MM_EMNO = Model.m_MisModify.MM_EMNO.Trim();
+    string MM_NAME = Model.m_MisModify.MM_NAME.Trim();
+    string MM_DPNO = Model.m_MisModify.MM_DPNO.Trim();
+    string MM_DPNAME = Model.m_MisModify.MM_DPNAME.Trim();
+    int MM_ATTACH = Model.m_MisModify.MM_ATTACH;
+    string MM_DATE1 = Model.m_MisModify.MM_DATE1.HasValue ? Model.m_MisModify.MM_DATE1.Value.ToString("yyyy-MM-dd") : "";
+    string MM_DATE2 = Model.m_MisModify.MM_DATE2.HasValue ? Model.m_MisModify.MM_DATE2.Value.ToString("yyyy-MM-dd") : "";
+    string MM_SUBJECT = Model.m_MisModify.MM_SUBJECT.Trim();
+    string MM_CONTENT1 = Model.m_MisModify.MM_CONTENT1 == null ? "" : Model.m_MisModify.MM_CONTENT1.Trim();
+    string MM_ACDATE = Model.m_MisModify.MM_ACDATE.HasValue ? Model.m_MisModify.MM_ACDATE.Value.ToString("yyyy-MM-dd") : "";
+    string MM_ACEMNO = Model.m_MisModify.MM_ACEMNO == null ? "" : Model.m_MisModify.MM_ACEMNO.Trim();
+    string MM_ACNAME = Model.m_MisModify.MM_ACNAME == null ? "" : Model.m_MisModify.MM_ACNAME.Trim();
+    string MM_PCDATE = Model.m_MisModify.MM_PCDATE.HasValue ? Model.m_MisModify.MM_PCDATE.Value.ToString("yyyy-MM-dd") : "";
+    decimal MM_PCHOUR = Model.m_MisModify.MM_PCHOUR ?? 0;
+    string MM_RCDATE = Model.m_MisModify.MM_RCDATE.HasValue ? Model.m_MisModify.MM_RCDATE.Value.ToString("yyyy-MM-dd") : "";
+    decimal MM_RCHOUR = Model.m_MisModify.MM_RCHOUR ?? 0;
+    string MM_ACBACKMEMO = Model.m_MisModify.MM_ACBACKMEMO.Trim();
+    string MM_MEMO1 = Model.m_MisModify.MM_MEMO1 == null ? "" : Model.m_MisModify.MM_MEMO1.Trim();
+    string MM_MEMO2 = Model.m_MisModify.MM_MEMO2 == null ? "" : Model.m_MisModify.MM_MEMO2.Trim();
+    string MM_MEMO3 = Model.m_MisModify.MM_MEMO3 == null ? "" : Model.m_MisModify.MM_MEMO3.Trim();
+    string MM_MEMO4 = Model.m_MisModify.MM_MEMO4 == null ? "" : Model.m_MisModify.MM_MEMO4.Trim();
+    string MM_ONEMNO = Model.m_MisModify.MM_ONEMNO == null ? "" : Model.m_MisModify.MM_ONEMNO.Trim();
+    string MM_ONCNAME = Model.m_MisModify.MM_ONCNAME == null ? "" : Model.m_MisModify.MM_ONCNAME.Trim();
+    string MM_ONDATE = Model.m_MisModify.MM_ONDATE.HasValue ? Model.m_MisModify.MM_ONDATE.Value.ToString("yyyy-MM-dd") : "";
+    decimal MM_FANO = Model.m_MisModify.MM_FANO ?? 0;
+    string MM_CONTENT2 = Model.m_MisModify.MM_CONTENT2.Trim();
+    int MM_U1 = Convert.ToInt32(Model.m_MisModify.MM_U1);
+    int MM_U2 = Convert.ToInt32(Model.m_MisModify.MM_U2);
+    int MM_U3 = Convert.ToInt32(Model.m_MisModify.MM_U3);
+    int MM_U4 = Convert.ToInt32(Model.m_MisModify.MM_U4);
+
+    int MM_PostYN = Convert.ToInt32(Model.m_MisModify.MM_POST ?? 0) > 0 ? 1 : 0;
+
+    int MM_Confirm = Model.m_MisModify.MM_Confirm ?? 0;
+    string MM_ConfirmNAME = Model.m_MisModify.MM_ConfirmNAME == null ? "" : Model.m_MisModify.MM_ConfirmNAME.Trim();
+    string MM_ConfirmDATE = Model.m_MisModify.MM_ConfirmDATE.HasValue ? Model.m_MisModify.MM_ConfirmDATE.Value.ToString("yyyy-MM-dd") : "";
+    int mm_sub = Model.m_MisModify.mm_sub ?? 0;
+    string[] ArrU = new string[] { "□", "■" };
+    string[] ArrPostYN = new string[] { "N", "Y" };
+    string MM_FACTORY = "";
+    switch (MM_FANO)
+    {
+        case 0:
+            MM_FACTORY = "台灣廠";
+            break;
+        case 1:
+            MM_FACTORY = "深圳廠";
+            break;
+        case 2:
+            MM_FACTORY = "太倉廠";
+            break;
+        case 3:
+            MM_FACTORY = "天津廠";
+            break;
+    }
+}
+<table class="table table-bordered table-hover table-table-responsive-sm table-condensed" cellpadding="0" cellspacing="0">
+    <tbody>
+        @if (@MM_ACBACKMEMO != "")
+        {
+        <tr class="table-warning">
+            <th colspan="5">
+                <b>退件說明： </b> <br /> @MM_ACBACKMEMO
+            </th>
+        </tr>
+        }
+        <tr class="table-info">
+            <td colspan="5">
+                <b>編號： </b> @MM_NO
+            </td>
+        </tr>
+        <tr class="table-info">
+            <td>
+                <b>廠別： </b> @MM_FACTORY
+            </td>
+            <td>
+                <b>申請部門： </b> @MM_DPNAME
+            </td>
+            <td>
+                <b>申請者： </b> @MM_NAME
+            </td>
+            <td colspan="2">
+                <b>申請日期： </b> @MM_DATE1
+            </td>
+        </tr>
+        <tr class="table-info">
+            <td colspan="3">
+                <b> 附件： </b> @MM_ATTACH
+            </td>
+            <td>
+                <b>公告否： </b> @ArrPostYN[MM_PostYN % 2]
+            </td>
+            <td>
+                <b> 希望完成日期： </b> @MM_DATE2
+            </td>
+        </tr>
+        <tr class="table-info">
+            <td colspan="5">
+                <b> 系統程式異動主題項目： </b> @MM_SUBJECT
+            </td>
+        </tr>
+        <tr class="table-info">
+            <td colspan="5">
+                <b> 修改依據說明： </b> <br /> @MM_CONTENT2
+            </td>
+        </tr>
+        <tr class="table-info">
+            <td colspan="5">
+                <b>系統程式異動內容： </b> <br /> @MM_CONTENT1
+            </td>
+        </tr>
+        <tr class="table-info">
+            <td colspan="5">
+                <b> 適用廠別： </b> @ArrU[MM_U1] &nbsp; 台灣廠 &nbsp;&nbsp;&nbsp;
+                @ArrU[MM_U2] &nbsp; 深圳廠  &nbsp;&nbsp;&nbsp;
+                @ArrU[MM_U3] &nbsp; 太倉廠  &nbsp;&nbsp;&nbsp;
+                @ArrU[MM_U4] &nbsp; 天津廠  &nbsp;&nbsp;&nbsp;
+            </td>
+        </tr>
+        <tr class="table-secondary">
+            <td colspan="2">
+                <b>資訊確認： </b> @MM_ConfirmNAME
+            </td>
+            <td colspan="3">
+                <b>資訊確認時間： </b> @MM_ConfirmDATE
+            </td>
+        </tr>
+        <tr class="table-secondary">
+            <td colspan="5">
+                <b>退件說明： </b> <br /> @MM_ACBACKMEMO
+            </td>
+        </tr>
+        <tr class="table-secondary">
+            <td colspan="2">
+                <b>實際處理工時： </b> @MM_RCHOUR
+            </td>
+            <td colspan="3">
+                <b>完工日期： </b> @MM_RCDATE
+            </td>
+        </tr>
+        <tr class="table-secondary">
+            <td colspan="5">
+                <b>延誤說明： </b> <br /> @MM_MEMO1
+            </td>
+        </tr>
+        <tr class="table-secondary">
+            <td colspan="5">
+                <b>程式完工說明： </b> <br /> @MM_MEMO2
+            </td>
+        </tr>
+        <tr class="table-secondary">
+            <td>
+                <b>接單確認者： </b> @MM_ACNAME
+            </td>
+            <td>
+                <b>預定處理工時： </b> @MM_PCHOUR
+            </td>
+            <td>
+                <b>預定完成日期： </b> @MM_PCDATE
+            </td>
+            <td>
+                <b>接單日期： </b> @MM_ACDATE
+            </td>
+            <td>
+                <b>接件確認內容： </b> @MM_MEMO3
+            </td>
+        </tr>
+        <tr class="table-secondary">
+            <td colspan="5">
+                <b>異動程式： </b> @MM_MEMO4
+            </td>
+        </tr>
+        <tr class="table-secondary">
+            <td colspan="2">
+                <b>結單上線者： </b> @MM_ONCNAME
+            </td>
+            <td colspan="3">
+                <b>結單上線日期： </b> @MM_ONDATE
+            </td>
+        </tr>
+    </tbody>
+</table>
+<table class="table table-bordered table-hover table-table-responsive-sm table-condensed" cellpadding="0" cellspacing="0">
+    <thead class="thead-dark text-center">
+        <tr>
+            <th>
+                <b>歷程</b>
+            </th>
+            <th>
+                <b>操作者姓名</b>
+            </th>
+            <th>
+                <b>操作時間</b>
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.m_MisModifyHis)
+        {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelitem => item.mh_event)
+            </td>
+            <td>
+                @Html.DisplayFor(modelitem => item.mh_name)
+            </td>
+            <td>
+                @{ string t = item.mh_date.HasValue ? item.mh_date.Value.ToString("yyyy-MM-dd") : ""; }
+                @Html.DisplayFor(modelitem => @t)
+            </td>
+        </tr>
+        }
+    </tbody>
+</table>

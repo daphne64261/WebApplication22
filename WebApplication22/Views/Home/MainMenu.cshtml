@@ -1,0 +1,102 @@
+﻿@model IEnumerable<Data.Models.sysfunclist>
+@{
+    ViewBag.Title = "政伸MIS系統";
+    int r1 = 0, r2 = 0, r3 = 0, up = 0;
+    int bottom_line = 30;
+    string s = "";
+}
+@if ((Model != null) && (Model.Count() > 0))
+{
+    <div class="dropdown" id="My_Main_Menu">
+        <button class="btn btn-primary dropdown-toggle" type="button" id="Level_0" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            @ViewBag.Title
+        </button>
+        <div class="dropdown-menu" id="Level_1" aria-labelledby="Level_0">
+            @foreach (var L1_item in Model.Where(x => x.sfl_level == 1 && x.sfl_child == 1).ToList())
+            {
+                r1 = r1 + 1;
+                string m1_label = L1_item.sfl_name;
+                if (L1_item.sfl_entry != null)
+                {
+                    string m1_area = Model.Where(x => x.sfl_id == L1_item.sfl_entry).First().sfl_SYS;
+                    string m1_controller = Model.Where(x => x.sfl_id == L1_item.sfl_entry).First().sfl_FUNC;
+                    string m1_action = Model.Where(x => x.sfl_id == L1_item.sfl_entry).First().sfl_PAGE;
+                    <div>
+                        @Html.ActionLink(m1_label, m1_action, m1_controller, new { area = m1_area }, htmlAttributes: new { @class = "dropdown-item" })
+                    </div>
+                }
+                else
+                {
+                    r2 = r1 + @Model.Where(x => x.sfl_level == 2 && x.sfl_child == 1 && x.sfl_parent == L1_item.sfl_id).Count();
+                    up = r2 > bottom_line ? r2 - bottom_line : 0;
+                    s = up > 0 ? "t-move-up-" + up : "";
+                    <div class="dropdown-submenu">
+                        <a class="dropdown-item dropdown-toggle" href="#"> @m1_label </a>
+                        <div class="dropdown-menu @s">
+                            @{r2 = r1 - 1 - up;}
+                            @foreach (var L2_item in Model.Where(x => x.sfl_level == 2 && x.sfl_child == 1 && x.sfl_parent == L1_item.sfl_id).ToList())
+                            {
+                                r2 = r2 + 1;
+                                string m2_label = L2_item.sfl_name;
+                                if (L2_item.sfl_entry != null)
+                                {
+                                    string m2_area = Model.Where(x => x.sfl_id == L2_item.sfl_entry).First().sfl_SYS;
+                                    string m2_controller = Model.Where(x => x.sfl_id == L2_item.sfl_entry).First().sfl_FUNC;
+                                    string m2_action = Model.Where(x => x.sfl_id == L2_item.sfl_entry).First().sfl_PAGE;
+                                    <div>
+                                        @Html.ActionLink(m2_label, m2_action, m2_controller, new { area = m2_area }, htmlAttributes: new { @class = "dropdown-item" })
+                                    </div>
+                                }
+                                else
+                                {
+                                    r3 = r2 + @Model.Where(x => x.sfl_level == 3 && x.sfl_child == 1 && x.sfl_parent == L2_item.sfl_id).Count();
+                                    up = r3 > bottom_line ? r3 - bottom_line : 0;
+                                    s = up > 0 ? "t-move-up-" + up : "";
+                                    <div class="dropdown-submenu">
+                                        <a class="dropdown-item dropdown-toggle" href="#"> @m2_label </a>
+                                        <div class="dropdown-menu @s">
+                                            @{r3 = r2 - 1 - up;}
+                                            @foreach (var L3_item in Model.Where(x => x.sfl_level == 3 && x.sfl_child == 1 && x.sfl_parent == L2_item.sfl_id).ToList())
+                                            {
+                                                r3 = r3 + 1;
+                                                string m3_label = L3_item.sfl_name;
+                                                if (L3_item.sfl_entry != null)
+                                                {
+                                                    string m3_area = Model.Where(x => x.sfl_id == L3_item.sfl_entry).First().sfl_SYS;
+                                                    string m3_controller = Model.Where(x => x.sfl_id == L3_item.sfl_entry).First().sfl_FUNC;
+                                                    string m3_action = Model.Where(x => x.sfl_id == L3_item.sfl_entry).First().sfl_PAGE;
+                                                    <div>
+                                                        @Html.ActionLink(m3_label, m3_action, m3_controller, new { area = m3_area }, htmlAttributes: new { @class = "dropdown-item" })
+                                                    </div>
+                                                }
+                                                else
+                                                {
+                                                    <div class="dropdown-submenu">
+                                                        <a class="dropdown-item dropdown-toggle" href="#"> @m3_label </a>
+                                                        <div class="dropdown-menu" id="Level_4">
+                                                            @foreach (var L4_item in Model.Where(x => x.sfl_level == 4 && x.sfl_parent == L3_item.sfl_id).ToList())
+                                                            {
+                                                                string m4_label = L4_item.sfl_name;
+                                                                string m4_area = Model.Where(x => x.sfl_id == L4_item.sfl_entry).First().sfl_SYS;
+                                                                string m4_controller = Model.Where(x => x.sfl_id == L4_item.sfl_entry).First().sfl_FUNC;
+                                                                string m4_action = Model.Where(x => x.sfl_id == L4_item.sfl_entry).First().sfl_PAGE;
+                                                                <div>
+                                                                    @Html.ActionLink(m4_label, m4_action, m4_controller, new { area = m4_area }, htmlAttributes: new { @class = "dropdown-item" })
+                                                                </div>
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                }
+                                            }
+                                        </div>
+                                    </div>
+                                }
+                            }
+                        </div>
+                    </div>
+                }
+            }
+        </div>
+    </div>
+}
+

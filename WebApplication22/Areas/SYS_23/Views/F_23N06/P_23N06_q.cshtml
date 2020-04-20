@@ -1,0 +1,292 @@
+﻿@*
+    改寫Transart\MisService\mser01_q1.asp
+    維持HTML設計
+*@
+
+@model PagedList.IPagedList<WebApplication22.Areas.SYS_23.Models.MisServiceManager>
+@using PagedList.Mvc;
+
+@{
+    ViewBag.Title = "資訊服務申請單--清單";
+
+    //連結UrlPath
+    string my_URL = this.Request.Url.ToString();
+    string my_controllername = this.ViewContext.RouteData.Values["controller"].ToString();
+    int i = my_URL.IndexOf(my_controllername);
+    string base_URL = my_URL.Remove(i);
+
+    //接收controller 傳送變數
+    string loginID = ViewBag.loginID;
+    string loginName = ViewBag.loginName;
+    string the_dpno = ViewBag.the_dpno;
+    int? PageSize = ViewBag.PageSize;
+    int? PageNumber = ViewBag.PageNumber;
+
+    //設定日期
+    string today = DateTime.Today.ToLongDateString();
+
+    //隱藏欄位依資料列數命名
+    int dataCount = 0;
+    string MS_NOstr = "";
+    string MS_SUBJECTstr = "";
+    string MS_EMNOstr = "";
+    string MS_NAMEstr = "";
+    string MS_DPNAME = "";
+    string MS_CONTENTstr = "";
+    string MS_CONTENT2str = "";
+    string MS_POSTstr = "";
+    string MS_REASONstr = "";
+    string ms_date1 = "";
+}
+
+@*網頁處理結果之訊息顯示*@
+@if (TempData["message"] != null)
+{
+    <script type="text/javascript">
+        var message = @Html.Raw(Json.Encode(TempData["message"]));
+        alert(message);
+    </script>
+}
+else
+{
+    //pass
+}
+<form name="frmCtl" method="post" >
+    <center>
+        <table class="text-center datatableYellow" border=1 cellspacing=0 cellpadding=3 id='DataBody' style="behavior:url(../library/tablehl.htc); width:70%" hlColor='#FFFF66' slColor='#FFFF66' bordercolor='#D7DCDD'>
+            <THEAD>
+                <tr height=25 >
+                    <td colspan=8 align="left" class='heading2'>資訊服務需求單--部門主管審核</td>
+                </tr>
+                <tr>
+                    <td height=20 width=70 class='clsFiledTitleCenter'>單號</td>
+                    <td height=20 width=150 class='clsFiledTitleCenter'>主題</td>
+                    <td height=20 width=300 class='clsFiledTitleCenter'>服務內容</td>
+                    <td height=20 width=60 class='clsFiledTitleCenter'>申請者</td>
+                    <td height=20 width=70 class='clsFiledTitleCenter'>申請部門</td>
+                    <td height=20 width=70 class='clsFiledTitleCenter'>申請日期</td>
+                    <td height=20 width=40 class='clsFiledTitleCenter'>選取</td>
+                    <td height=20 width=90 class='clsFiledTitleCenter'>原因說明</td>
+                </tr>
+            </THEAD>
+
+            @if (Model != null)
+            {
+                foreach (var item in Model)
+                {
+                    @*為避免勾選時, 開出資料明細視窗, showcontent 指定再特定資料欄*@
+                    <tr height=25>
+                        @if (item.MS_ACBACKMEMO != null & item.MS_ACBACKMEMO != "")
+                        {
+                            <td width=70 onclick="ShowContent('@item.MS_NO')" style='cursor:pointer;BACKGROUND-COLOR:#FF8080;'>@item.MS_NO</td>
+                        }
+                        else
+                        {
+                            <td width=70 onclick="ShowContent('@item.MS_NO')" style='cursor:pointer;'>@item.MS_NO</td>
+
+                        }
+
+                        <td width=150 align="left" onclick="ShowContent('@item.MS_NO')" style='cursor:pointer'>@item.MS_SUBJECT</td>
+                        <!--<td width=300 class='clsListNormalLeft' style='cursor:pointer' >" & Replace(MS_CONTENT,CHR(10) ,"<br>" ) & "</td>-->
+                        <td width=300 align="left" onclick="ShowContent('@item.MS_NO')" style='cursor:pointer'>@item.MS_CONTENT1</td>
+                        <td width=60 onclick="ShowContent('@item.MS_NO')" style='cursor:pointer'>@item.MS_NAME</td>
+                        <td width=75 onclick="ShowContent('@item.MS_NO')" style='cursor:pointer'>@item.MS_DPNAME</td>
+                        <td width=70 onclick="ShowContent('@item.MS_NO')" style='cursor:pointer'>
+                            @{
+                                if (item.MS_DATE1 != null)
+                                {
+                                    ms_date1 = item.MS_DATE1.Value.ToString("yyyy/MM/dd");
+                                }
+                                else
+                                {
+
+                                }
+                            }
+                            @*顯示處理過的日期資料*@
+                            @ms_date1
+                            @{
+                                MS_NOstr = "MS_NO" + dataCount.ToString();
+                                MS_SUBJECTstr = "MS_SUBJECT" + dataCount.ToString();
+                                MS_EMNOstr = "MS_EMNO" + dataCount.ToString();
+                                MS_NAMEstr = "MS_NAME" + dataCount.ToString();
+                                MS_DPNAME = "MS_DPNAME" + dataCount.ToString();
+                                MS_CONTENTstr = "MS_CONTENT" + dataCount.ToString();
+                                MS_CONTENT2str = "MS_CONTENT2" + dataCount.ToString();
+                                MS_POSTstr = "MS_POST" + dataCount.ToString();
+                                MS_REASONstr = "MS_REASON" + dataCount.ToString();
+                            }
+                            <input type='hidden' id=@MS_NOstr name=@MS_NOstr value=@item.MS_NO>
+                            <input type='hidden' id=@MS_SUBJECTstr name=@MS_SUBJECTstr value=@item.MS_SUBJECT>
+                            <input type='hidden' id=@MS_EMNOstr name=@MS_EMNOstr value=@item.MS_EMNO>
+                            <input type='hidden' id=@MS_NAMEstr name=@MS_NAMEstr value=@item.MS_NAME>
+                            <input type='hidden' id=@MS_DPNAME name=@MS_DPNAME value=@item.MS_DPNAME>
+                            <input type='hidden' id=@MS_CONTENTstr name=@MS_CONTENTstr value=@item.MS_CONTENT1>
+                            <input type='hidden' id=@MS_CONTENT2str name=@MS_CONTENT2str value=@item.MS_CONTENT2>
+                        </td>
+                        <td width=40>
+                            <input type=checkbox id=@MS_POSTstr name=@MS_POSTstr value='1' style="zoom:150%">
+                        </td>
+                        <td width=90>
+                            <input id=@MS_REASONstr name=@MS_REASONstr size=11 value='' autocomplete="off">
+                        </td>
+                    </tr>
+                    @* 已在@foreach 無須再加@*@
+                    {
+                        dataCount = dataCount + 1;
+                    }
+                } @*//end of foreach*@                
+            }@*//end of if model !=null*@
+        </table>
+        @*設定資料筆數*@
+        <input type='hidden' name='RecCount' id='RecCount' value=@dataCount>
+        @*帶入登入者資訊*@
+        <input type="hidden" id="MS_EMNO" name="MS_EMNO" value=@loginID>
+        <input type="hidden" id="MS_NAME" name="MS_NAME" value=@loginName>
+        <input type="hidden" id="MS_DPNO" name="MS_DPNO" value=@the_dpno>
+        <input type="hidden" id="MS_DATE1" name="MS_DATE1" value=@today>
+
+        @*資料大於10筆再顯示跳頁元件*@
+        @if (Model.TotalItemCount > 10) //用於判斷筆數, 此變數需與controller 定義筆數一致
+        {
+            <div class="d-flex justify-content-center">
+                @Html.PagedListPager(
+                  //(PagedList.IPagedList<Data.Models.MisService>)TempData["DataRow"],
+                  Model,
+                   page => Url.Action("P_23N06_q", "F_23N06", new
+                   {
+                       loginID = loginID,
+                       loginName = loginName,
+                       the_dpno = the_dpno,
+                       PageNumber = page,
+                       PageSize = PageSize
+                   }
+                                     ),
+                   new PagedListRenderOptions
+                   {
+                       LinkToFirstPageFormat = "<< 第一頁",
+                       LinkToPreviousPageFormat = "< 上一頁",
+                       LinkToNextPageFormat = "下一頁 >",
+                       LinkToLastPageFormat = "最後一頁 >>",
+                       DisplayLinkToFirstPage = PagedListDisplayMode.Always,
+                       DisplayLinkToPreviousPage = PagedListDisplayMode.Always,
+                       DisplayLinkToNextPage = PagedListDisplayMode.Always,
+                       DisplayLinkToLastPage = PagedListDisplayMode.Always,
+                       //DisplayLinkToIndividualPages = false,
+                       //PageCountAndCurrentLocationFormat = "第 {0} 頁 / 共 {1} 頁",
+                       //DisplayPageCountAndCurrentLocation = true,
+                       ItemSliceAndTotalFormat = "第 {0} 到 {1} 項 / 共 {2} 項",
+                       DisplayItemSliceAndTotal = true
+                   })
+            </div>
+        }
+
+    </center>
+</form>
+
+<script>
+    $(document).ready(function () {
+        //設定TopButton按鈕顯示與動作
+        replaceButtonText("spl_f1", "核准");
+        replaceButtonText("spl_f2", "不核准");
+
+        //確認測試系統查詢按鈕反灰, 故作此設定
+        document.getElementById("spl_qry").setAttribute("disabled", true);
+
+        //點選"核准"
+        $("#spl_f1").click(function () {
+            DoF1();
+        });
+
+        //點選"不核准"
+        $("#spl_f2").click(function () {
+            DoF2();
+        });
+    });
+
+    function ShowContent(ms_no) {
+        //rptURL="mser01_l1.asp?ms_no=" + ms_no ;
+        //sFeature = "status:no; center:yes; help:no; dialogWidth:800px ;dialogHeight:500px ;resizable:yes";
+        //retVal = window.showModelessDialog(rptURL, null, sFeature);
+
+        var ms_no = ms_no;
+        let h = 500;
+        let w = 800;
+        let top = (screen.height / 2) - (h / 2);
+        let left = (screen.width / 2) - (w / 2);
+
+        window.open("/SYS_23/F_23N06/MisServiceShow1?MS_NO=" + ms_no, "myWindow",
+            config = "width=" + w + ",height=" + h +
+            ",left=" + left + ",top=" + top + ",toolbar=no,menubar=no," +
+            "resizable=yes,status=no,location=no,scrollbars=no")
+    }
+
+    function replaceButtonText(buttonId, text) {
+        if (document.getElementById) {
+            var button = document.getElementById(buttonId);
+            if (button) {
+                if (button.childNodes[0]) {
+                    button.childNodes[0].nodeValue = text;
+                }
+                else if (button.value) {
+                    button.value = text;
+                }
+                else //if (button.innerHTML)
+                {
+                    button.innerHTML = text;
+                }
+            }
+        }
+    }
+
+    function DoF1() {
+        var i;
+        var checkCount = 0;
+        var postValue;
+        for (i = 0; i < @dataCount; i++) {
+            postValue = $("#MS_POST" + i.toString()).is(":checked");
+            //alert(postValue);//true==1 false
+            if (postValue) {
+                checkCount = checkCount + 1;
+            }
+        }
+
+        if (checkCount > 0) {
+            if (confirm("確定核准選取的申請單？")) {
+                //document.frmCtl.action = "library/MisService_wfls.asp?wfls_Action=wfl_MisService_Post1()";
+                //document.frmCtl.submit();
+                $("form").attr("action", "/SYS_23/F_23N06/wfl_MisService_Post1");
+                $("form").submit();
+            } else {
+                //no action
+            }
+        } else {
+            alert("尚未勾選任何資料!");
+        }
+    }
+
+    function DoF2() {
+        var i;
+        var checkCount = 0;
+        var postValue;
+        for (i = 0; i < @dataCount; i++) {
+            postValue = $("#MS_POST" + i.toString()).is(":checked");
+            if (postValue) {
+                checkCount = checkCount + 1;
+            }
+        }
+
+        if (checkCount > 0) {
+            if (confirm("確定不核准選取的申請單？")) {
+                //document.frmCtl.action = "library/MisService_wfls.asp?wfls_Action=wfl_MisService_Post2()";
+                //document.frmCtl.submit();
+                $("form").attr("action", "/SYS_23/F_23N06/wfl_MisService_Post2");
+                $("form").submit();
+            } else {
+                //window.systemButton.btnSysF2.enable(true);
+            }
+        } else {
+            alert("尚未勾選任何資料!");
+        }
+    }
+</script>
+

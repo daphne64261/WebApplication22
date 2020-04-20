@@ -1,0 +1,108 @@
+﻿@model List<WebApplication22.Areas.SYS_01.Models.P_01E03_q_Model>
+@{
+    string The_YM = ViewBag.The_YM;
+    string The_LastYM = ViewBag.The_LastYM;
+    string The_NextYM = ViewBag.The_NextYM;
+    string The_DPNO = ViewBag.The_DPNO;
+    string loginID = ViewBag.loginID;
+    string msg = ViewBag.message;
+    ViewBag.Title = "公務車借用審核";
+}
+<link href="~/Content/mainstyle.css" rel="stylesheet" />
+@if (!string.IsNullOrEmpty(msg))
+{
+    <script>
+        alert("@msg")
+    </script>
+}
+<form method="post" action="/SYS_01/F_01E03_q/wfl_TripApply_CarVerify" name="Clt_frm" id="Clt_frm" onsubmit="return Save();">
+    <table width="780" border="0" cellspacing="0" cellpadding="0" align='center'>
+        <tr>
+            <td width="780">
+                <table width="760" border="0" cellspacing="0" cellpadding="0" class='heading'>
+                    <tr align='center'>
+                        <td height=25 width="520" align=right>
+                            <a style='text-decoration:none;' href='P_01E03_q?The_YM=@(The_LastYM)&The_DPNO=@(The_DPNO)&loginID=@(loginID)'>
+                                <i class="fa fa-arrow-left"></i>
+                            </a>
+                            &nbsp;&nbsp; @(The_YM) &nbsp;公務車借用審核&nbsp;&nbsp;
+                            <a style='text-decoration:none;' href='P_01E03_q?The_YM=@(The_NextYM)&The_DPNO=@(The_DPNO)&loginID=@(loginID)'>
+                                <i class="fa fa-arrow-right"></i>
+                            </a>
+                        </td>
+
+                        <td height=25>
+                            <input type="button" value="全部核准" onclick="check_all();">
+
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        <tr>
+            <td width="780">
+                <table width="760" border="0" cellspacing="0" cellpadding="0" id='ColBody' bordercolor="#D7DCDD" style="BORDER-COLLAPSE: collapse">
+                    <tr align='center'>
+                        <td height='20' class='clsFiledTitleCenter' width='70'>登錄序號
+                        <td height='20' class='clsFiledTitleCenter' width='70'>車號
+                        <td height='20' class='clsFiledTitleCenter' width='70'>借用人員
+                        <td height='20' class='clsFiledTitleCenter' width='90'>借用部門
+                        <td height='20' class='clsFiledTitleCenter' width='150'>前往地點
+                        <td height='20' class='clsFiledTitleCenter' width='260'>借用期間
+                        <td height='20' class='clsFiledTitleCenter' width='50'>核准
+                </table>
+        <tr>
+            <td width="780">
+                <table width="760" border="1" cellspacing="0" cellpadding="0" id='DataBody' bordercolor="#D7DCDD" style="BORDER-COLLAPSE: collapse" style="behavior:url(../library/tablehl.htc);" hlColor='#FFFF66' slColor='#FFFF66' bordercolor='#D7DCDD'>
+                    <TBODY>
+                        @for (int i = 0; i < Model.Count; i++)
+                        {
+                            <tr height=25>
+                                <td width='70' class='clsListNormalCenter' onclick="ShowContent('@(Model[i].Rec.ty_no)')"> @(Model[i].Rec.ty_no)	    </td>
+                                <td width='70' class='clsListNormalCenter' onclick="ShowContent('@(Model[i].Rec.ty_no)')"> @(Model[i].Rec.tt_carno)	</td>
+                                <td width='70' class='clsListNormalCenter' onclick="ShowContent('@(Model[i].Rec.ty_no)')"> @(Model[i].Rec.ty_name)	</td>
+                                <td width='90' class='clsListNormalCenter' onclick="ShowContent('@(Model[i].Rec.ty_no)')"> @(Model[i].Rec.ty_dpname) </td>
+                                <td width='150' class='clsListNormalCenter' onclick="ShowContent('@(Model[i].Rec.ty_no)')"> @(Model[i].Rec.ty_place)	</td>
+                                <td width='260' class='clsListNormalCenter' onclick="ShowContent('@(Model[i].Rec.ty_no)')"> @(Model[i].Rec.ty_date1.ToString("yyyy/MM/dd")) ～ @(Model[i].Rec.ty_date2.ToString("yyyy/MM/dd")) </td>
+                                <td width='50' class='clsListNormalCenter'>
+                                    @Html.HiddenFor(model => Model[i].Rec.ty_no)
+                                    @Html.CheckBoxFor(model => model[i].ChkYN)
+                                </td>
+                            </tr>
+                        }
+                    </TBODY>
+                </table>
+    </table>
+    <input type="hidden" name="loginID" id="loginID" value="@loginID">
+    <input type="hidden" name="loginCName" id="loginCName" value="">
+    <input type="hidden" name="compID" id="compID" value="">
+    <input type="hidden" name="The_YM" id="The_YM" value="@The_YM">
+    <input type="hidden" name="The_DPNO" id="The_DPNO" value="@The_DPNO">
+
+</form>
+
+<script>
+    function check_all() {
+        $("input:checkbox").prop("checked", true);
+    }
+    function ShowContent(ty_no) {
+        rptURL = "/SYS_01/F_01D07/P_01D07_l?ty_no=" + ty_no;
+        sFeature = "status=no,left=500,top=100,width=800,height=650,resizable=yes,toolbar=no,titlebar=yes,menubar=no";
+        //alert(rptURL);
+        retVal = window.open(rptURL, "_blank", sFeature);
+    }
+    function Save() {
+        if ($('input:checkbox:checked').length == 0) {
+            alert("無公務車借用資料可供核准！");
+            $("#spl_save_info").dialog("close");
+            return false;
+        }
+        if (confirm("確定核准以下勾選的公務車借用申請？")) {
+            return true;
+        }
+        else {
+            $("#spl_save_info").dialog("close");
+            return false;
+        }
+    }
+</script>

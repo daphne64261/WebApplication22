@@ -1,0 +1,209 @@
+﻿@model Data.Models.Vehicle_M
+@{
+    ViewBag.Title = "公務車加油及維護建立--編輯";
+}
+<link href="~/Content/mainstyle.css" rel="stylesheet" />
+<form name="Clt_frm" id="Clt_frm" method="post">
+    <INPUT type="hidden" id="vm_seqno" name="vm_seqno" value="@Model.vm_seqno">
+    <table border="0" cellspacing="1" cellpadding="0" width="600">
+        <tr>
+            <td colspan=6 class='heading' height=25>公務車加油及維護建立--編輯</td>
+        </tr>
+        <tr>
+            <td class="clsFiledTitleCenter" width="80">車　　號</td>
+            <td class="clsListNormalLeft" width="320" colspan=3>
+                <INPUT id="vm_carno" name="vm_carno" size="7" class="clsListStyle02" Readonly Tabindex=-1 value="@Model.vm_carno">
+            </td>
+            <td class="clsFiledTitleCenter" width="80">項　　目</td>
+            <td class="clsListNormalLeft" width="120" colspan=3>
+                <select name="vm_item" id="vm_item" class='clsListStyle02' onchange="ChgItem()" value="@(Model.vm_item ?? 0)">
+                    <option value="1">加　　油</option>
+                    <option value="2">保養維護</option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td class="clsFiledTitleCenter" width="80">日　　期</td>
+            <td class="clsListNormalLeft" width="120">
+                <input type="text" id="vm_date" name="vm_date" size="10" maxlength="10" class="clsListNormalLeft datepicker" onchange="chkDate(this)" value='@((Model.vm_date ?? DateTime.Today).ToString("yyyy/MM/dd"))'>
+            </td>
+            <td class="clsFiledTitleCenter" width="80">卡　　號</td>
+            <td class="clsListNormalLeft" width="120">
+                <INPUT id="vm_emno" name="vm_emno" maxlength="3" size="3" onchange="fn_Clt_emno_Change_Server()" class="clsListNormalLeft" value="@Model.vm_emno">
+                <i class="fa fa-search Find" data-to-value-id="vm_emno" data-to-text-id="vm_name" data-from="employee"></i>
+            </td>
+            <td class="clsFiledTitleCenter" width="80">姓　　名</td>
+            <td class="clsListNormalLeft" width="120">
+                <INPUT id="vm_name" name="vm_name" maxlength=10 size="10" class="clsListStyle02" Readonly Tabindex=-1 value="@Model.vm_name">
+            </td>
+        </tr>
+        <tr>
+            <td class="clsFiledTitleCenter" width="80">上次里程</td>
+            <td class="clsListNormalLeft" width="120">
+                <INPUT id="vm_trip1" name="vm_trip1" maxlength=10 size="10" class="clsListNormalRight" onchange="chkNum(this);CalTrip();CalOcost();" value="@(Model.vm_trip1 ?? 0)">
+            </td>
+            <td class="clsFiledTitleCenter" width="80">本次里程</td>
+            <td class="clsListNormalLeft" width="120">
+                <INPUT id="vm_trip2" name="vm_trip2" maxlength=10 size="10" class="clsListNormalRight" onchange="chkNum(this);CalTrip();CalOcost();" value="@(Model.vm_trip2 ?? 0)">
+            </td>
+            <td class="clsFiledTitleCenter" width="80">行駛里程</td>
+            <td class="clsListNormalLeft" width="120">
+                <INPUT id="vm_trip" name="vm_trip" maxlength=10 size="10" class="clsListStyle02" style="Text-Align:Right" Readonly Tabindex=-1 value="@(Model.vm_trip ?? 0)">
+            </td>
+        </tr>
+        <tr id="R_Oil">
+            <td class="clsFiledTitleCenter" width="80">加油公升數</td>
+            <td class="clsListNormalLeft" width="120">
+                <INPUT id="vm_oiladd" name="vm_oiladd" maxlength=10 size="10" class="clsListNormalRight" onchange="chkNum(this);CalOcost();" value="@(Model.vm_oiladd ?? 0)">
+            </td>
+            <td class="clsFiledTitleCenter" width="80">油耗(KM/L)</td>
+            <td class="clsListNormalLeft" width="320" colspan=3>
+                <INPUT id="vm_ocost" name="vm_ocost" maxlength=10 size="10" class="clsListStyle02" style="Text-Align:Right" Readonly Tabindex=-1 value="@(Model.vm_ocost ?? 0)">
+            </td>
+        </tr>
+        <tr>
+            <td class="clsFiledTitleCenter" width="80">本次金額</td>
+            <td class="clsListNormalLeft" width="120">
+                <INPUT id="vm_mcost" name="vm_mcost" maxlength=10 size="10" class="clsListNormalRight" onchange="chkNum(this)" value="@(Model.vm_mcost ?? 0)">
+            </td>
+            <td class="clsFiledTitleCenter" width="80">發票號碼</td>
+            <td class="clsListNormalLeft" width="320" colspan=3>
+                <INPUT id="vm_OilInv" name="vm_OilInv" maxlength=10 size="10" class="clsListNormalLeft" value="@(Model.vm_OilInv)">
+            </td>
+        </tr>
+        <tr>
+            <td class="clsFiledTitleCenter" width="80">備註</td>
+            <td class="clsListNormalLeft" width="520" colspan=5>
+                <INPUT id="vm_memo" name="vm_memo" maxlength="100" size="80" class="clsListNormalLeft" value="@(Model.vm_memo)">
+            </td>
+        </tr>
+    </table>
+</form>
+<script>
+    $(document).ready(function () {
+        $("#spl_add").click(function () {
+            location.href = "/SYS_01/F_01E05/P_01E05_a";
+        });
+        $("#spl_del").click(function () {
+            if (confirm("是否確定刪除此筆資料?")) {
+                $("form").attr("action", "/SYS_01/F_01E05/wfl_vehicle_M_delete");
+                $("form").submit();
+            }
+        });
+        $("#spl_save").click(function () {
+            $("form").attr("action", "/SYS_01/F_01E05/wfl_vehicle_M_update");
+            $("form").submit();
+        });
+        $("#spl_qry").click(function () {
+            location.href = "/SYS_01/F_01E05/P_01E05_q";
+        });
+    });
+    function fn_Clt_emno_Change_Server() {
+        var em_no;
+
+        em_no = $("#vm_emno").val();
+
+        if (em_no != "") {
+            var my_param = { strSQL : "Select em_cname from employee where em_no='" + em_no + "'" };
+            $.post("/SYS_01/F_01E05/qryBroker", my_param, fn_Clt_emno_Change_Client);
+        } else {
+            $("#vm_name").val("");
+        }
+    }
+    function fn_Clt_emno_Change_Client(data) {
+        if (data.length > 0) {
+            $("#vm_name").val(data[0]);
+        } else {
+            alert("您輸入的員工編號不存在!!");
+            $("#vm_emno").val("");
+            $("#vm_name").val("");
+            $("#vm_emno").focus();
+            return;
+        }
+    }
+    function chkDate(objSrc) {
+        //若為空白則帶出今日日期
+        if (objSrc.value != "") {
+            var datePattern = /^(\d{4})(\/)(0?[1-9]|1[012])(\/)(0?[1-9]|[12][0-9]|3[01])$/;
+            var ok = objSrc.value.match(datePattern);
+            if (!ok) {
+                alert("日期格式錯誤！");
+
+                var today = new Date();
+                objSrc.value = $.datepicker.formatDate('yy/mm/dd', today);
+                return;
+            } else {
+                var yyyy = objSrc.value.substr(0, 4);
+                var MM = objSrc.value.substr(5, 2);
+                var dd = objSrc.value.substr(8, 2);
+                var t = new Date(yyyy, MM - 1, dd)
+                var t2 = $.datepicker.formatDate('yy/mm/dd', t);
+                var t_yyyy = t2.substr(0, 4);
+                var t_MM = t2.substr(5, 2);
+                var t_dd = t2.substr(8, 2);
+                if ((yyyy != t_yyyy) || (MM != t_MM) || (dd != t_dd)) {
+                    alert("日期錯誤！");
+                    return;
+                }
+                else {
+                    objSrc.value = t2;
+                }
+            }
+        } else {
+            var today = new Date();
+            objSrc.value = $.datepicker.formatDate('yy/mm/dd', today);
+        }
+    }
+    //數字檢驗
+    function chkNum(objSrc) {
+        var Qty;
+        Qty = objSrc.value;
+
+        if (!$.isNumeric(Qty)) {
+            alert("請輸入數字！");
+            objSrc.value = 0;
+            return;
+        }
+    }
+
+    function ChgItem() {
+        var vm_item = $("#vm_item").val();
+
+        //若是保養維護，則把加油和油耗歸零
+        if (vm_item == "2") {
+            $("#vm_oiladd").val("0");
+            $("#vm_ocost").val("0");
+
+            $("#R_Oil").css("display","none");
+
+        } else {
+            $("#R_Oil").css("display", "");
+        }
+    }
+
+    function CalTrip() {
+        var vm_trip, vm_ocost;
+
+        var vm_trip1 = $("#vm_trip1").val();
+        var vm_trip2 = $("#vm_trip2").val();
+
+        if (vm_trip1 != "" && vm_trip2 != "") {
+            vm_trip = parseFloat(vm_trip2) - parseFloat(vm_trip1);
+
+            $("#vm_trip").val(vm_trip);
+        }
+    }
+    //計算油耗
+    function CalOcost() {
+        var vm_ocost;
+        var vm_trip   = $("#vm_trip").val();
+        var vm_item = $("#vm_item").val();
+        var vm_oiladd = $("#vm_oiladd").val();
+
+        if (vm_item == "1" && parseFloat(vm_oiladd) > 0) {
+            vm_ocost = parseFloat(vm_trip) / parseFloat(vm_oiladd);
+            $("#vm_ocost").val(vm_ocost.toFixed(2));
+        }
+    }
+
+</script>

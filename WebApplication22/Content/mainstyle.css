@@ -1,0 +1,545 @@
+﻿.heading {
+    FONT-WEIGHT: bold;
+    FONT-SIZE: 15px;
+    COLOR: white;
+    FONT-FAMILY: "新細明體";
+    BACKGROUND-COLOR: #0000ff
+}
+
+.clsListNormalLeft {
+    FONT-SIZE: 12px;
+    FONT-FAMILY: "新細明體";
+    BACKGROUND-COLOR: white;
+    TEXT-ALIGN: left
+}
+
+.clsListNormalCenter {
+    FONT-SIZE: 12px;
+    FONT-FAMILY: "新細明體";
+    BACKGROUND-COLOR: white;
+    TEXT-ALIGN: center
+}
+
+.clsListNormalRight {
+    FONT-SIZE: 12px;
+    FONT-FAMILY: "新細明體";
+    BACKGROUND-COLOR: white;
+    TEXT-ALIGN: right
+}
+
+.clsTableTitleLeft {
+    FONT-WEIGHT: bold;
+    FONT-SIZE: 12px;
+    FONT-FAMILY: "新細明體";
+    BACKGROUND-COLOR: dodgerblue;
+    TEXT-ALIGN: left
+}
+
+.clsTableTitleCenter {
+    FONT-WEIGHT: bold;
+    FONT-SIZE: 12px;
+    FONT-FAMILY: "新細明體";
+    BACKGROUND-COLOR: dodgerblue;
+    TEXT-ALIGN: center
+}
+
+.clsTableTitleRight {
+    FONT-WEIGHT: bold;
+    FONT-SIZE: 12px;
+    FONT-FAMILY: "新細明體";
+    BACKGROUND-COLOR: dodgerblue;
+    TEXT-ALIGN: right
+}
+
+.clsFiledTitleLeft {
+    FONT-SIZE: 12px;
+    FONT-FAMILY: "新細明體";
+    BACKGROUND-COLOR: lightskyblue;
+    TEXT-ALIGN: left
+}
+
+.clsFiledTitleCenter {
+    FONT-SIZE: 12px;
+    FONT-FAMILY: "新細明體";
+    BACKGROUND-COLOR: lightskyblue;
+    TEXT-ALIGN: center
+}
+
+.clsFiledTitleRight {
+    FONT-SIZE: 12px;
+    FONT-FAMILY: "新細明體";
+    BACKGROUND-COLOR: lightskyblue;
+    TEXT-ALIGN: right
+}
+
+.clsListStyle01 {
+    FONT-SIZE: 12px;
+    COLOR: #330099;
+    FONT-FAMILY: "新細明體";
+    BACKGROUND-COLOR: white
+}
+
+.clsListStyle02 {
+    FONT-SIZE: 12px;
+    FONT-FAMILY: "新細明體";
+    BACKGROUND-COLOR: #ffff99
+}
+
+.clsListStyle02Right {
+    FONT-SIZE: 12px;
+    FONT-FAMILY: "新細明體";
+    BACKGROUND-COLOR: #ffff99;
+    TEXT-ALIGN: right
+}
+
+.clsListStyle03 {
+    FONT-SIZE: 12px;
+    COLOR: #FF0000;
+    FONT-FAMILY: "新細明體";
+    BACKGROUND-COLOR: white
+}
+
+.clsButton {
+    FONT-SIZE: 12px;
+    WIDTH: 85px;
+    COLOR: mediumblue;
+    FONT-FAMILY: "新細明體";
+    HEIGHT: 25px;
+    BACKGROUND-COLOR: silver
+}
+
+.clsLightStyle03 {
+    FONT-SIZE: 12px;
+    FONT-FAMILY: "新細明體";
+    BACKGROUND-COLOR: #ffff66
+}
+
+.clsButtonMiddle {
+    FONT-SIZE: 12px;
+    WIDTH: 30px;
+    COLOR: mediumblue;
+    FONT-FAMILY: 新細明體;
+    HEIGHT: 25px;
+    BACKGROUND-COLOR: silver
+}
+
+.clsButtonLarge {
+    FONT-SIZE: 12px;
+    WIDTH: 135px;
+    COLOR: mediumblue;
+    FONT-FAMILY: 新細明體;
+    HEIGHT: 25px;
+    BACKGROUND-COLOR: silver
+}
+
+.clsPosterMenu {
+    FONT-SIZE: 12px;
+    WIDTH: 120px;
+    COLOR: #FFFFFF;
+    FONT-FAMILY: 新細明體;
+    HEIGHT: 25px;
+    BACKGROUND-COLOR: #8080C0
+}
+
+.clsPosterMenuSelected {
+    FONT-SIZE: 12px;
+    WIDTH: 120px;
+    COLOR: #FF8040;
+    FONT-FAMILY: 新細明體;
+    HEIGHT: 25px;
+    BACKGROUND-COLOR: #FF8000
+}
+
+
+.clsPosterList {
+    FONT-SIZE: 9pt;
+    COLOR: #000000;
+    FONT-FAMILY: 新細明體;
+    BACKGROUND-COLOR: #FFFFFF CURSOR: hand
+}
+
+.blueon {
+    FONT-WEIGHT: normal;
+    FONT-SIZE: 9pt;
+    BACKGROUND: #3366FF;
+    CURSOR: hand;
+    COLOR: #FFFFFF;
+    LINE-HEIGHT: normal;
+    FONT-STYLE: normal;
+    FONT-VARIANT: normal
+}
+
+.blueoff {
+    FONT-WEIGHT: normal;
+    FONT-SIZE: 9pt;
+    COLOR: #000000;
+    LINE-HEIGHT: normal;
+    FONT-STYLE: normal;
+    FONT-VARIANT: normal
+}
+
+.title0 {
+    BORDER-RIGHT: gray 1px solid;
+    PADDING-RIGHT: 0px;
+    PADDING-LEFT: 5px;
+    FONT-SIZE: 9pt;
+    PADDING-BOTTOM: 0px;
+    WIDTH: 102%;
+    COLOR: #ffffff;
+    PADDING-TOP: 0px;
+    BORDER-BOTTOM: gray 1px solid;
+    HEIGHT: 20px;
+    BACKGROUND-COLOR: #336699
+}
+
+.clsProcess0 {
+    FONT-SIZE: 12px;
+    FONT-FAMILY: "新細明體";
+    BACKGROUND-COLOR: white;
+    TEXT-ALIGN: center
+}
+
+.clsProcess1 {
+    FONT-SIZE: 12px;
+    FONT-FAMILY: "新細明體";
+    BACKGROUND-COLOR: #FFFF00;
+    TEXT-ALIGN: center
+}
+
+.clsProcess2 {
+    FONT-SIZE: 12px;
+    FONT-FAMILY: "新細明體";
+    BACKGROUND-COLOR: #00FF00;
+    TEXT-ALIGN: center
+}
+
+.clsProcess4 {
+    FONT-SIZE: 12px;
+    FONT-FAMILY: "新細明體";
+    BACKGROUND-COLOR: #80FFFF;
+    TEXT-ALIGN: center
+}
+
+.clsProcess5 {
+    FONT-SIZE: 12px;
+    FONT-FAMILY: "新細明體";
+    BACKGROUND-COLOR: #EEEEEE;
+    TEXT-ALIGN: center
+}
+
+.clsProcess6 {
+    FONT-SIZE: 12px;
+    FONT-FAMILY: "新細明體";
+    BACKGROUND-COLOR: #C0C0C0;
+    TEXT-ALIGN: center
+}
+
+.clsProcess8 {
+    FONT-SIZE: 12px;
+    FONT-FAMILY: "新細明體";
+    BACKGROUND-COLOR: #8080FF;
+    TEXT-ALIGN: center
+}
+
+.clsProcess9 {
+    FONT-SIZE: 12px;
+    FONT-FAMILY: "新細明體";
+    BACKGROUND-COLOR: #FF0000;
+    TEXT-ALIGN: center
+}
+
+.clsProcess10 {
+    FONT-SIZE: 12px;
+    FONT-FAMILY: "新細明體";
+    BACKGROUND-COLOR: #FDD64D;
+    TEXT-ALIGN: center
+}
+
+.clsProcessBarHead {
+    FONT-SIZE: 12px;
+    FONT-FAMILY: "新細明體";
+    BACKGROUND-COLOR: lightskyblue;
+    TEXT-ALIGN: center
+}
+
+.clsProcessBarContent {
+    FONT-SIZE: 12px;
+    FONT-FAMILY: "新細明體";
+    BACKGROUND-COLOR: white;
+    TEXT-ALIGN: left
+}
+
+.clsProcessBar0 {
+    FONT-SIZE: 12px;
+    FONT-FAMILY: "新細明體";
+    BACKGROUND-COLOR: white;
+    TEXT-ALIGN: center
+}
+
+.clsProcessBar1 {
+    FONT-SIZE: 12px;
+    FONT-FAMILY: "新細明體";
+    BACKGROUND-COLOR: #FF80FF;
+    TEXT-ALIGN: center
+}
+
+.clsProcessBar2 {
+    FONT-SIZE: 12px;
+    FONT-FAMILY: "新細明體";
+    BACKGROUND-COLOR: #FAD976;
+    TEXT-ALIGN: center
+}
+
+.clsProcessBar3 {
+    FONT-SIZE: 12px;
+    FONT-FAMILY: "新細明體";
+    BACKGROUND-COLOR: #FFFFA2;
+    TEXT-ALIGN: center
+}
+
+.clsProcessBar4 {
+    FONT-SIZE: 12px;
+    FONT-FAMILY: "新細明體";
+    BACKGROUND-COLOR: #ACFFD6;
+    TEXT-ALIGN: center
+}
+
+.clsProcessBar5 {
+    FONT-SIZE: 12px;
+    FONT-FAMILY: "新細明體";
+    BACKGROUND-COLOR: #FF80FF;
+    TEXT-ALIGN: center
+}
+
+.clsProcessBar6 {
+    FONT-SIZE: 12px;
+    FONT-FAMILY: "新細明體";
+    BACKGROUND-COLOR: #FAD976;
+    TEXT-ALIGN: center
+}
+
+.clsProcessBar7 {
+    FONT-SIZE: 12px;
+    FONT-FAMILY: "新細明體";
+    BACKGROUND-COLOR: #FFFFA2;
+    TEXT-ALIGN: center
+}
+
+.clsProcessBar8 {
+    FONT-SIZE: 12px;
+    FONT-FAMILY: "新細明體";
+    BACKGROUND-COLOR: #ACFFD6;
+    TEXT-ALIGN: center
+}
+
+.clsProcessBar9 {
+    FONT-SIZE: 12px;
+    FONT-FAMILY: "新細明體";
+    BACKGROUND-COLOR: #FF80FF;
+    TEXT-ALIGN: center
+}
+
+.clsProcessSquare0 {
+    FONT-SIZE: 12px;
+    FONT-FAMILY: "新細明體";
+    COLOR: white;
+}
+
+.clsProcessSquare1 {
+    FONT-SIZE: 12px;
+    FONT-FAMILY: "新細明體";
+    COLOR: #FFFF00;
+}
+
+.clsProcessSquare2 {
+    FONT-SIZE: 12px;
+    FONT-FAMILY: "新細明體";
+    COLOR: #00FF00;
+}
+
+.clsProcessSquare3 {
+    FONT-SIZE: 12px;
+    FONT-FAMILY: "新細明體";
+    COLOR: #000000;
+}
+
+.clsProcessSquare8 {
+    FONT-SIZE: 12px;
+    FONT-FAMILY: "新細明體";
+    COLOR: #8080FF;
+}
+
+.clsProcessSquare9 {
+    FONT-SIZE: 12px;
+    FONT-FAMILY: "新細明體";
+    COLOR: #FF0000;
+}
+
+.clsListQuickCenter {
+    FONT-SIZE: 12px;
+    FONT-FAMILY: "新細明體";
+    COLOR: red;
+    BACKGROUND-COLOR: white;
+    TEXT-ALIGN: center
+}
+
+.clsListQuickLeft {
+    FONT-SIZE: 12px;
+    FONT-FAMILY: "新細明體";
+    COLOR: red;
+    BACKGROUND-COLOR: white;
+    TEXT-ALIGN: left
+}
+
+.clsListQuickRight {
+    FONT-SIZE: 12px;
+    FONT-FAMILY: "新細明體";
+    COLOR: red;
+    BACKGROUND-COLOR: white;
+    TEXT-ALIGN: right
+}
+
+.clsBreakTitleCenter {
+    FONT-SIZE: 12px;
+    FONT-FAMILY: "新細明體";
+    BACKGROUND-COLOR: #FFBA53;
+    COLOR: black;
+    TEXT-ALIGN: center
+}
+
+.clsBreakTitleLeft {
+    FONT-SIZE: 12px;
+    FONT-FAMILY: "新細明體";
+    BACKGROUND-COLOR: #FFBA53;
+    COLOR: black;
+    TEXT-ALIGN: left
+}
+
+.clsBreakTitleRight {
+    FONT-SIZE: 12px;
+    FONT-FAMILY: "新細明體";
+    BACKGROUND-COLOR: #FFBA53;
+    COLOR: black;
+    TEXT-ALIGN: right
+}
+
+.clsButtonLittle {
+    FONT-SIZE: 12px;
+    WIDTH: 85px;
+    COLOR: mediumblue;
+    FONT-FAMILY: 新細明體;
+    HEIGHT: 20px;
+    BACKGROUND-COLOR: silver
+}
+
+.clsButtonLittle1 {
+    FONT-SIZE: 12px;
+    WIDTH: 85px;
+    COLOR: #FF0000;
+    FONT-FAMILY: 新細明體;
+    HEIGHT: 20px;
+    BACKGROUND-COLOR: silver
+}
+
+.clsButtonLittle2 {
+    FONT-SIZE: 12px;
+    WIDTH: 85px;
+    COLOR: #408080;
+    FONT-FAMILY: 新細明體;
+    HEIGHT: 20px;
+    BACKGROUND-COLOR: silver
+}
+
+.clsButtonLittle3 {
+    FONT-SIZE: 12px;
+    WIDTH: 70px;
+    COLOR: #FFFF00;
+    FONT-FAMILY: 新細明體;
+    HEIGHT: 20px;
+    BACKGROUND-COLOR: silver
+}
+
+.clsButtonLittle4 {
+    FONT-SIZE: 12px;
+    WIDTH: 70px;
+    COLOR: #808080;
+    FONT-FAMILY: 新細明體;
+    HEIGHT: 20px;
+    BACKGROUND-COLOR: silver
+}
+
+.BOX {
+    height: 100px;
+    width: 200px;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    margin-top: -150px;
+    margin-left: -150px;
+}
+
+.clsListNormalLeft_Big {
+    FONT-SIZE: 14px;
+    FONT-FAMILY: "新細明體";
+    BACKGROUND-COLOR: white;
+    TEXT-ALIGN: left
+}
+
+.clsListNormalCenter_Big {
+    FONT-SIZE: 14px;
+    FONT-FAMILY: "新細明體";
+    BACKGROUND-COLOR: white;
+    TEXT-ALIGN: center
+}
+
+.clsListNormalRight_Big {
+    FONT-SIZE: 14px;
+    FONT-FAMILY: "新細明體";
+    BACKGROUND-COLOR: white;
+    TEXT-ALIGN: right
+}
+
+.clsTableTitleLeft_Big {
+    FONT-WEIGHT: bold;
+    FONT-SIZE: 14px;
+    FONT-FAMILY: "新細明體";
+    BACKGROUND-COLOR: dodgerblue;
+    TEXT-ALIGN: left
+}
+
+.clsTableTitleCenter_Big {
+    FONT-WEIGHT: bold;
+    FONT-SIZE: 14px;
+    FONT-FAMILY: "新細明體";
+    BACKGROUND-COLOR: dodgerblue;
+    TEXT-ALIGN: center
+}
+
+.clsTableTitleRight_Big {
+    FONT-WEIGHT: bold;
+    FONT-SIZE: 14px;
+    FONT-FAMILY: "新細明體";
+    BACKGROUND-COLOR: dodgerblue;
+    TEXT-ALIGN: right
+}
+
+.clsFiledTitleLeft_Big {
+    FONT-SIZE: 14px;
+    FONT-FAMILY: "新細明體";
+    BACKGROUND-COLOR: lightskyblue;
+    TEXT-ALIGN: left
+}
+
+.clsFiledTitleCenter_Big {
+    FONT-SIZE: 14px;
+    FONT-FAMILY: "新細明體";
+    BACKGROUND-COLOR: lightskyblue;
+    TEXT-ALIGN: center
+}
+
+.clsFiledTitleRight_Big {
+    FONT-SIZE: 14px;
+    FONT-FAMILY: "新細明體";
+    BACKGROUND-COLOR: lightskyblue;
+    TEXT-ALIGN: right
+}

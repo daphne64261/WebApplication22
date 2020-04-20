@@ -1,0 +1,72 @@
+﻿@model PagedList.IPagedList<WebApplication22.Areas.SYS_01.Models.P_01E05_l_REC>
+@using PagedList.Mvc;
+@Styles.Render("~/Content/css")
+@{
+    ViewBag.Title = "公務車加油及維護登錄";
+    string m_vm_carno = ViewBag.vm_carno;
+    string m_Date1 = ViewBag.Date1;
+    string m_Date2 = ViewBag.Date2;
+    int m_PageSize = ViewBag.PageSize;
+    int m_PageNo = ViewBag.PageNo;
+    string[] ArrItem = new string[] { "", "加油", "保養維護" };
+}
+<link href="~/Content/mainstyle.css" rel="stylesheet" />
+<table width="300" border="0" cellspacing="1" cellpadding="0" align="center">
+    <thead>
+        <tr>
+            <td height="25" width="100" class="clsFiledTitleCenter">車號</td>
+            <td height="25" width="100" class="clsFiledTitleCenter">日期</td>
+            <td height="25" width="100" class="clsFiledTitleCenter">項目</td>
+            <td height="25" width="100" class="clsFiledTitleCenter">里程</td>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.Count > 0)
+        {
+            foreach (var item in Model)
+            {
+                <tr onclick="window.opener.location.href='@Url.Action("P_01E05_e", "F_01E05", new { vm_seqno = item.vm_seqno })'">
+                    <td height="25" width="100" class="clsListNormalCenter"> @(item.vm_carno) </td>
+                    <td height="25" width="100" class="clsListNormalCenter"> @(item.vm_date?.ToString("yyyy/MM/dd")) </td>
+                    <td height="25" width="100" class="clsListNormalCenter"> @(ArrItem[Decimal.ToInt32(item.vm_item ?? 0)]) </td>
+                    <td height="25" width="100" class="clsListNormalCenter"> @(item.vm_trip2 ?? 0) </td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td height="" 25"" colspan=3 class="" clsListNormalCenter"">無資料</td>
+            </tr>
+        }
+    </tbody>
+</table>
+@if (Model.Count > 0)
+{
+    <div class="d-flex justify-content-center">
+        @Html.PagedListPager(
+          Model,
+          page => Url.Action("P_01E05_l", "F_01E05", new { vm_carno = m_vm_carno,
+                                                          Date1 = m_Date1,
+                                                          Date2 = m_Date2 ,
+                                                          PageSize = m_PageSize,
+                                                          PageNo = page }
+                            ),
+          new PagedListRenderOptions
+          {
+              LinkToFirstPageFormat = "<< 第一頁",
+              LinkToPreviousPageFormat = "< 上一頁",
+              LinkToNextPageFormat = "下一頁 >",
+              LinkToLastPageFormat = "最後一頁 >>",
+              DisplayLinkToFirstPage = PagedListDisplayMode.Always,
+              DisplayLinkToPreviousPage = PagedListDisplayMode.Always,
+              DisplayLinkToNextPage = PagedListDisplayMode.Always,
+              DisplayLinkToLastPage = PagedListDisplayMode.Always,
+              DisplayLinkToIndividualPages = false
+                     //PageCountAndCurrentLocationFormat = "第 {0} 頁 / 共 {1} 頁",
+              //DisplayPageCountAndCurrentLocation = true,
+              //ItemSliceAndTotalFormat = "第 {0} 到 {1} 項 / 共 {2} 項",
+              //DisplayItemSliceAndTotal = true
+          })
+    </div>
+}

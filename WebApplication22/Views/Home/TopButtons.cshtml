@@ -1,0 +1,95 @@
+﻿@model Data.Models.sysprivilege
+@{
+    string m_add = "disabled";
+    string m_edit = "disabled";
+    string m_del = "disabled";
+    string m_qry = "disabled";
+    string m_save = "disabled";
+    string m_cancel = "disabled";
+    if (Model != null)
+    {
+        m_add = Model.spl_add == 1 ? "" : "disabled";
+        m_edit = Model.spl_edit == 1 ? "" : "disabled";
+        m_del = Model.spl_del == 1 ? "" : "disabled";
+        m_qry = Model.spl_qry == 1 ? "" : "disabled";
+        m_save = Model.spl_save == 1 ? "" : "disabled";
+        m_cancel = Model.spl_cancel == 1 ? "" : "disabled";
+    }
+}
+
+<li class="nav-item">
+    <button type="button" id="spl_add" @m_add class="navbar-btn">新增</button>
+</li>
+<li class="nav-item">
+    <button type="button" id="spl_edit" @m_edit class="navbar-btn">修改</button>
+</li>
+<li class="nav-item">
+    <button type="button" id="spl_del" @m_del class="navbar-btn">刪除</button>
+</li>
+<li class="nav-item">
+    <button type="button" id="spl_qry" @m_qry class="navbar-btn">查詢</button>
+</li>
+<li class="nav-item">
+    <button type="button" id="spl_save" @m_save class="navbar-btn">儲存</button>
+</li>
+<li class="nav-item">
+    <button type="button" id="spl_cancel" @m_cancel class="navbar-btn">取消</button>
+</li>
+@if (Model != null)
+{
+    @Html.HiddenFor(x => Model.spl_sflid, new { id = "pdf_id" })
+    if (Model.spl_f1 == 1)
+    {
+        <li class="nav-item">
+            <button type="button" id="spl_f1" class="navbar-btn">F1</button>
+        </li>
+    }
+    if (Model.spl_f2 == 1)
+    {
+        <li class="nav-item">
+            <button type="button" id="spl_f2" class="navbar-btn">F2</button>
+        </li>
+    }
+    if (Model.spl_f3 == 1)
+    {
+        <li class="nav-item">
+            <button type="button" id="spl_f3" class="navbar-btn">F3</button>
+        </li>
+    }
+    if (Model.spl_f4 == 1)
+    {
+        <li class="nav-item">
+            <button type="button" id="spl_f4" class="navbar-btn">F4</button>
+        </li>
+    }
+    if (Model.spl_f5 == 1)
+    {
+        <li class="nav-item">
+            <button type="button" id="spl_f5" class="navbar-btn">F5</button>
+        </li>
+    }
+    if (Model.spl_f6 == 1)
+    {
+        <li class="nav-item">
+            <button type="button" id="spl_f6" class="navbar-btn">F6</button>
+        </li>
+    }
+    if (Model.spl_f7 == 1)
+    {
+        <li class="nav-item">
+            <button type="button" id="spl_f7" class="navbar-btn">F7</button>
+        </li>
+    }
+    if (Model.spl_f8 == 1)
+    {
+        <li class="nav-item">
+            <button type="button" id="spl_f8" class="navbar-btn">F8</button>
+        </li>
+    }
+    if (Model.spl_f9 == 1)
+    {
+        <li class="nav-item">
+            <button type="button" id="spl_f9" class="navbar-btn">F9</button>
+        </li>
+    }
+}

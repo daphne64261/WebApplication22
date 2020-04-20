@@ -1,0 +1,81 @@
+﻿
+@model PagedList.IPagedList<Data.Models.employee>
+@using PagedList.Mvc;
+@Styles.Render("~/Content/css")
+<style>
+    #ShowList_Table {
+        width: 50%
+    }
+
+        #ShowList_Table th,
+        #ShowList_Table tr,
+        #ShowList_Table td {
+            margin: 0;
+            padding: 0;
+        }
+</style>
+@{
+    int m_page_number = ViewBag.page_number;
+    int m_page_size = ViewBag.page_size;
+}
+<div class="d-flex justify-content-center">
+
+    <table id="ShowList_Table" class="table table-bordered table-hover table-condensed">
+        <thead class="bg-info text-left">
+            <tr>
+                <th>
+                    員工編號
+                </th>
+                <th>
+                    員工名稱
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr onclick='Pass("@item.em_no.Trim()", "@item.em_cname.Trim()", "@item.em_dpno.Trim()")'>
+                    <td>
+                        @Html.DisplayFor(modelitem => item.em_no)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelitem => item.em_cname)
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+<div class="d-flex justify-content-center">
+    @Html.PagedListPager(
+      Model,
+      page => Url.Action("ShowList_employee", "Popup", new
+          {
+              page_number = page,
+          page_size = m_page_size
+          }
+                        ),
+      new PagedListRenderOptions
+      {
+          LinkToFirstPageFormat = "<< 第一頁",
+          LinkToPreviousPageFormat = "< 上一頁",
+          LinkToNextPageFormat = "下一頁 >",
+          LinkToLastPageFormat = "最後一頁 >>",
+          DisplayLinkToFirstPage = PagedListDisplayMode.Always,
+          DisplayLinkToPreviousPage = PagedListDisplayMode.Always,
+          DisplayLinkToNextPage = PagedListDisplayMode.Always,
+          DisplayLinkToLastPage = PagedListDisplayMode.Always,
+          DisplayLinkToIndividualPages = true
+          //PageCountAndCurrentLocationFormat = "第 {0} 頁 / 共 {1} 頁",
+          //DisplayPageCountAndCurrentLocation = true,
+          //ItemSliceAndTotalFormat = "第 {0} 到 {1} 項 / 共 {2} 項",
+          //DisplayItemSliceAndTotal = true
+      })
+</div>
+<script>
+    function Pass(em_no, em_cname, em_dpno) {
+        window.opener.emp_update(em_no, em_cname, em_dpno);
+        window.close();
+    }
+</script>
+
